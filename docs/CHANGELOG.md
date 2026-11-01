@@ -3,9 +3,22 @@
 All notable changes to this project will be documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.4.0] — 2026-11-01
+
+### Added
+- Local MySQL 9.7 database integration (`medipriority_db` and dedicated `medipriority_user`).
+- Executed all 12 Flyway schema migrations (V1–V12) with full seed datasets.
+- Successfully launched Spring Boot backend on `http://localhost:8080` (Tomcat) with OpenAPI / Swagger UI.
+- Successfully launched React 18 + Vite development server on `http://localhost:5173`.
+- Verified end-to-end integration across all 10 core clinical and operational workflows.
+
+### Fixed
+- Fixed Jackson serialization `HttpMessageConversionException` on lazy-loaded Hibernate `ByteBuddyInterceptor` proxies in `AuditLog` by adding `@JsonIgnoreProperties` and masking `User.passwordHash` with `@JsonIgnore`.
+
 ---
 
 ## [0.3.0] — 2026-11-01
+
 
 ### Added
 - Complete React 18 + TypeScript + Vite + Tailwind CSS frontend application.

@@ -39,3 +39,12 @@ None. All discovered bugs have been resolved and verified by automated unit test
 - **Root Cause:** Reassessment creates a new entry with an incremented version; stale entries are lazily discarded during traversal/extraction.
 - **Resolution:** Adjusted test assertion to extract until `null` is returned, verifying lazy eviction of stale entries.
 - **Status:** RESOLVED
+
+### BUG-005: Jackson HttpMessageConversionException on Hibernate Lazy Proxy (AuditLog)
+- **Date Found:** 2026-11-01
+- **Severity:** MEDIUM
+- **Description:** `GET /api/audit-logs` resulted in HTTP 500 error: `HttpMessageConversionException: Type definition error: [simple type, class org.hibernate.proxy.pojo.bytebuddy.ByteBuddyInterceptor]`.
+- **Root Cause:** `AuditLog.user` is a lazy-loaded Hibernate proxy. Jackson ObjectMapper attempted to serialize internal ByteBuddy proxy interception fields and unmasked passwordHash.
+- **Resolution:** Added `@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})` to `User` and `AuditLog`, and added `@JsonIgnore` to `User.passwordHash`.
+- **Status:** RESOLVED
+

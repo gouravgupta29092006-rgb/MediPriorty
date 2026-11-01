@@ -31,14 +31,17 @@ PHASE 14 — Finalization & Production Readiness (COMPLETE)
 
 ---
 
-## Build Status
+## Build & Operational Status
 
 | Component | Status | Details |
 |---|---|---|
-| Backend | BUILD SUCCESS | Java 21 LTS (Temurin), Maven 3.9.9, 92 compiled classes |
-| Frontend | BUILD SUCCESS | Vite 5.4, React 18, TypeScript 5.4, Tailwind CSS, 0 errors |
+| Backend Server | RUNNING (Port 8080) | Java 21 LTS (Temurin), Spring Boot 3.3.5, Tomcat, Swagger at `/swagger-ui.html` |
+| Frontend Dev Server | RUNNING (Port 5173) | Vite 5.4, React 18, TypeScript 5.4, Tailwind CSS, 0 errors |
+| Database Engine | RUNNING (Port 3306) | MySQL 9.7 (`medipriority_db`), `medipriority_user` |
+| Flyway Migrations | V1 to V12 APPLIED | All 12 migrations successfully applied with initial seed data |
 | Unit Tests | ALL 31 PASS | 24 DSA tests + 7 Service tests, 0 failures, 0 errors |
-| Flyway Migrations | V1 to V12 | 12 migration scripts including rich seed data |
+| Integration Suite | ALL 10 STEPS PASS | Login, Patients, Emergency, Triage, Heap PQ, Ambulance, Bed, History, Audit, Dashboard |
+
 
 ---
 
