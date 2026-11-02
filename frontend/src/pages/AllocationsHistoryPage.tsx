@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { History, Truck, Bed, Clock, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { History, Truck, Bed, RefreshCw, Check } from 'lucide-react';
 import api from '../api/client';
 import { AmbulanceAllocation, BedAllocation } from '../types';
 
@@ -34,32 +34,32 @@ export const AllocationsHistoryPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-            <History className="w-5 h-5 text-blue-400" />
+          <h2 className="text-2xl font-bold tracking-tight text-text-primary flex items-center gap-2.5">
+            <History className="w-6 h-6 text-accent" />
             <span>Resource Allocation History & Audit</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-text-secondary mt-1">
             Immutable tracking of all ambulance dispatches, patient arrivals, and hospital bed occupancies
           </p>
         </div>
 
         <button
           onClick={fetchData}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#111C2E] border border-[#1E293B] text-xs font-medium text-slate-300 hover:text-white"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-bg-surface border border-[var(--border)] hover:border-[var(--border-strong)] text-xs font-semibold text-text-primary transition-all shadow-sm"
         >
-          <RefreshCw className="w-3.5 h-3.5" />
+          <RefreshCw className="w-3.5 h-3.5 text-accent" />
           <span>Refresh History</span>
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 text-xs border-b border-[#1E293B] pb-2">
+      <div className="flex items-center gap-2.5 text-xs">
         <button
           onClick={() => setActiveTab('AMBULANCE')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all ${
+          className={`flex items-center gap-2 px-5 py-2 rounded-full font-bold transition-all shadow-sm ${
             activeTab === 'AMBULANCE'
-              ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
-              : 'bg-[#111C2E] border border-[#1E293B] text-slate-400 hover:text-white'
+              ? 'bg-accent text-white shadow-sm'
+              : 'bg-bg-surface border border-[var(--border)] text-text-secondary hover:text-text-primary hover:border-[var(--border-strong)]'
           }`}
         >
           <Truck className="w-4 h-4" />
@@ -68,10 +68,10 @@ export const AllocationsHistoryPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('BED')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all ${
+          className={`flex items-center gap-2 px-5 py-2 rounded-full font-bold transition-all shadow-sm ${
             activeTab === 'BED'
-              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
-              : 'bg-[#111C2E] border border-[#1E293B] text-slate-400 hover:text-white'
+              ? 'bg-accent text-white shadow-sm'
+              : 'bg-bg-surface border border-[var(--border)] text-text-secondary hover:text-text-primary hover:border-[var(--border-strong)]'
           }`}
         >
           <Bed className="w-4 h-4" />
@@ -79,56 +79,61 @@ export const AllocationsHistoryPage: React.FC = () => {
         </button>
       </div>
 
-      {/* Table */}
-      <div className="bg-[#111C2E] border border-[#1E293B] rounded-xl overflow-hidden shadow-sm">
+      {/* Table Card */}
+      <div className="bg-bg-surface border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
         {loading ? (
-          <div className="py-16 text-center text-slate-400">
-            <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            <span>Loading allocation history records...</span>
+          <div className="py-20 flex flex-col items-center justify-center text-text-muted">
+            <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mb-3" />
+            <span className="text-xs font-semibold">Loading allocation history records...</span>
           </div>
         ) : activeTab === 'AMBULANCE' ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#0B1220] border-b border-[#1E293B] text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+              <thead className="bg-bg-surface-2/60 border-b border-[var(--border)] text-text-muted font-bold uppercase tracking-wider text-[11px]">
                 <tr>
-                  <th className="py-3 px-4">Alloc #</th>
-                  <th className="py-3 px-4">Request #</th>
-                  <th className="py-3 px-4">Patient Name</th>
-                  <th className="py-3 px-4">Ambulance Unit</th>
-                  <th className="py-3 px-4">Type</th>
-                  <th className="py-3 px-4">Dispatched At</th>
-                  <th className="py-3 px-4">Arrival At</th>
-                  <th className="py-3 px-4">Completed At</th>
-                  <th className="py-3 px-4">Dispatcher</th>
-                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3.5 px-5">Alloc #</th>
+                  <th className="py-3.5 px-5">Request #</th>
+                  <th className="py-3.5 px-5">Patient Name</th>
+                  <th className="py-3.5 px-5">Ambulance Unit</th>
+                  <th className="py-3.5 px-5">Type</th>
+                  <th className="py-3.5 px-5">Dispatched At</th>
+                  <th className="py-3.5 px-5">Arrival At</th>
+                  <th className="py-3.5 px-5">Completed At</th>
+                  <th className="py-3.5 px-5">Dispatcher</th>
+                  <th className="py-3.5 px-5">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1E293B] text-slate-300">
+              <tbody className="divide-y divide-[var(--border)] text-text-primary">
                 {ambulanceAllocs.length === 0 ? (
                   <tr>
-                    <td colSpan={10} className="py-10 text-center text-slate-500">
+                    <td colSpan={10} className="py-16 text-center text-text-muted font-medium">
                       No ambulance allocations recorded.
                     </td>
                   </tr>
                 ) : (
                   ambulanceAllocs.map((a) => (
-                    <tr key={a.allocationId} className="hover:bg-[#18253C]/40">
-                      <td className="py-3.5 px-4 font-mono font-bold text-slate-400">#{a.allocationId}</td>
-                      <td className="py-3.5 px-4 font-mono text-blue-400 font-semibold">{a.requestNumber}</td>
-                      <td className="py-3.5 px-4 font-semibold text-white">{a.patientName}</td>
-                      <td className="py-3.5 px-4 font-mono text-emerald-400">{a.ambulanceRegistration}</td>
-                      <td className="py-3.5 px-4 text-slate-400">{a.ambulanceType}</td>
-                      <td className="py-3.5 px-4 text-slate-400">{new Date(a.dispatchTime).toLocaleTimeString()}</td>
-                      <td className="py-3.5 px-4 text-slate-400">{a.arrivalTime ? new Date(a.arrivalTime).toLocaleTimeString() : '—'}</td>
-                      <td className="py-3.5 px-4 text-slate-400">{a.completionTime ? new Date(a.completionTime).toLocaleTimeString() : '—'}</td>
-                      <td className="py-3.5 px-4 text-slate-300">{a.allocatedBy}</td>
-                      <td className="py-3.5 px-4">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-                          a.status === 'ACTIVE'
-                            ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
-                            : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                    <tr key={a.allocationId} className="hover:bg-bg-surface-2/60 transition-colors">
+                      <td className="py-4 px-5 font-mono font-medium text-text-muted">#{a.allocationId}</td>
+                      <td className="py-4 px-5 font-mono text-accent font-bold">{a.requestNumber}</td>
+                      <td className="py-4 px-5 font-bold text-text-primary">{a.patientName}</td>
+                      <td className="py-4 px-5 font-mono text-text-primary font-medium">{a.ambulanceRegistration}</td>
+                      <td className="py-4 px-5">
+                        <span className="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-bg-surface-2 border border-[var(--border)] text-text-secondary">
+                          {a.ambulanceType}
+                        </span>
+                      </td>
+                      <td className="py-4 px-5 text-text-secondary">{new Date(a.dispatchTime).toLocaleTimeString()}</td>
+                      <td className="py-4 px-5 text-text-secondary">{a.arrivalTime ? new Date(a.arrivalTime).toLocaleTimeString() : '—'}</td>
+                      <td className="py-4 px-5 text-text-secondary">{a.completionTime ? new Date(a.completionTime).toLocaleTimeString() : '—'}</td>
+                      <td className="py-4 px-5 text-text-secondary">{a.allocatedBy}</td>
+                      <td className="py-4 px-5">
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold ${
+                          a.status === 'COMPLETED'
+                            ? 'text-[var(--success)] bg-[#DCFCE7] dark:bg-[var(--success-light)]'
+                            : 'text-accent bg-accent-light'
                         }`}>
-                          {a.status}
+                          {a.status === 'COMPLETED' && <Check className="w-3.5 h-3.5" />}
+                          <span>{a.status}</span>
                         </span>
                       </td>
                     </tr>
@@ -140,46 +145,51 @@ export const AllocationsHistoryPage: React.FC = () => {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#0B1220] border-b border-[#1E293B] text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+              <thead className="bg-bg-surface-2/60 border-b border-[var(--border)] text-text-muted font-bold uppercase tracking-wider text-[11px]">
                 <tr>
-                  <th className="py-3 px-4">Alloc #</th>
-                  <th className="py-3 px-4">Request #</th>
-                  <th className="py-3 px-4">Patient Name</th>
-                  <th className="py-3 px-4">Bed Number</th>
-                  <th className="py-3 px-4">Department</th>
-                  <th className="py-3 px-4">Bed Type</th>
-                  <th className="py-3 px-4">Reserved At</th>
-                  <th className="py-3 px-4">Admitted At</th>
-                  <th className="py-3 px-4">Released At</th>
-                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3.5 px-5">Alloc #</th>
+                  <th className="py-3.5 px-5">Request #</th>
+                  <th className="py-3.5 px-5">Patient Name</th>
+                  <th className="py-3.5 px-5">Bed Number</th>
+                  <th className="py-3.5 px-5">Department</th>
+                  <th className="py-3.5 px-5">Bed Type</th>
+                  <th className="py-3.5 px-5">Reserved At</th>
+                  <th className="py-3.5 px-5">Admitted At</th>
+                  <th className="py-3.5 px-5">Released At</th>
+                  <th className="py-3.5 px-5">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1E293B] text-slate-300">
+              <tbody className="divide-y divide-[var(--border)] text-text-primary">
                 {bedAllocs.length === 0 ? (
                   <tr>
-                    <td colSpan={10} className="py-10 text-center text-slate-500">
+                    <td colSpan={10} className="py-16 text-center text-text-muted font-medium">
                       No bed reservations recorded.
                     </td>
                   </tr>
                 ) : (
                   bedAllocs.map((b) => (
-                    <tr key={b.allocationId} className="hover:bg-[#18253C]/40">
-                      <td className="py-3.5 px-4 font-mono font-bold text-slate-400">#{b.allocationId}</td>
-                      <td className="py-3.5 px-4 font-mono text-blue-400 font-semibold">{b.requestNumber}</td>
-                      <td className="py-3.5 px-4 font-semibold text-white">{b.patientName}</td>
-                      <td className="py-3.5 px-4 font-mono text-indigo-400 font-bold">{b.bedNumber}</td>
-                      <td className="py-3.5 px-4 text-slate-300">{b.departmentName}</td>
-                      <td className="py-3.5 px-4 text-slate-400">{b.bedType}</td>
-                      <td className="py-3.5 px-4 text-slate-400">{new Date(b.reservedAt).toLocaleTimeString()}</td>
-                      <td className="py-3.5 px-4 text-slate-400">{b.admittedAt ? new Date(b.admittedAt).toLocaleTimeString() : '—'}</td>
-                      <td className="py-3.5 px-4 text-slate-400">{b.releasedAt ? new Date(b.releasedAt).toLocaleTimeString() : '—'}</td>
-                      <td className="py-3.5 px-4">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-                          b.status === 'ACTIVE'
-                            ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30'
-                            : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                    <tr key={b.allocationId} className="hover:bg-bg-surface-2/60 transition-colors">
+                      <td className="py-4 px-5 font-mono font-medium text-text-muted">#{b.allocationId}</td>
+                      <td className="py-4 px-5 font-mono text-accent font-bold">{b.requestNumber}</td>
+                      <td className="py-4 px-5 font-bold text-text-primary">{b.patientName}</td>
+                      <td className="py-4 px-5 font-mono text-text-primary font-bold">{b.bedNumber}</td>
+                      <td className="py-4 px-5 text-text-secondary">{b.departmentName}</td>
+                      <td className="py-4 px-5">
+                        <span className="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-bg-surface-2 border border-[var(--border)] text-text-secondary">
+                          {b.bedType}
+                        </span>
+                      </td>
+                      <td className="py-4 px-5 text-text-secondary">{new Date(b.reservedAt).toLocaleTimeString()}</td>
+                      <td className="py-4 px-5 text-text-secondary">{b.admittedAt ? new Date(b.admittedAt).toLocaleTimeString() : '—'}</td>
+                      <td className="py-4 px-5 text-text-secondary">{b.releasedAt ? new Date(b.releasedAt).toLocaleTimeString() : '—'}</td>
+                      <td className="py-4 px-5">
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold ${
+                          b.status === 'COMPLETED'
+                            ? 'text-[var(--success)] bg-[#DCFCE7] dark:bg-[var(--success-light)]'
+                            : 'text-accent bg-accent-light'
                         }`}>
-                          {b.status}
+                          {b.status === 'COMPLETED' && <Check className="w-3.5 h-3.5" />}
+                          <span>{b.status}</span>
                         </span>
                       </td>
                     </tr>

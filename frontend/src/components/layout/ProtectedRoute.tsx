@@ -14,10 +14,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowe
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0B1220] flex items-center justify-center text-slate-400">
+      <div className="min-h-screen bg-bg-primary flex items-center justify-center text-text-muted">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm">Loading MediPriority...</p>
+          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm font-semibold text-text-secondary">Loading MediPriority...</p>
         </div>
       </div>
     );

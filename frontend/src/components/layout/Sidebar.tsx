@@ -48,26 +48,26 @@ export const Sidebar: React.FC = () => {
   });
 
   return (
-    <aside className="w-64 bg-[#0D1728] border-r border-[#1E293B] flex flex-col h-screen fixed left-0 top-0 z-30 select-none">
+    <aside className="w-64 bg-bg-sidebar border-r border-[var(--border)] flex flex-col h-screen fixed left-0 top-0 z-30 select-none">
       {/* Brand header */}
-      <div className="h-16 px-5 flex items-center gap-3 border-b border-[#1E293B]">
-        <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+      <div className="h-16 px-5 flex items-center gap-3 border-b border-[var(--border)]">
+        <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center shadow-md flex-shrink-0">
           <Activity className="w-5 h-5 text-white" />
         </div>
         <div>
-          <h1 className="font-bold text-base tracking-wide text-white flex items-center gap-1.5">
+          <h1 className="font-bold text-base tracking-wide text-text-primary flex items-center gap-1.5">
             MediPriority
-            <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
+            <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-accent-light text-accent-text border border-[var(--border)]">
               Pro
             </span>
           </h1>
-          <p className="text-[11px] text-slate-400">Emergency Decision Support</p>
+          <p className="text-[11px] text-text-muted">Emergency Decision Support</p>
         </div>
       </div>
 
       {/* Navigation menu */}
-      <div className="flex-1 py-4 px-3 overflow-y-auto space-y-1">
-        <p className="px-3 text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-2">
+      <div className="flex-1 py-4 px-3 overflow-y-auto space-y-0.5">
+        <p className="px-3 text-[11px] font-semibold tracking-wider text-text-muted uppercase mb-2">
           Operations
         </p>
         {filteredItems.map((item) => {
@@ -79,8 +79,8 @@ export const Sidebar: React.FC = () => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-[#111C2E]'
+                    ? 'bg-accent text-white shadow-sm'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-accent-light'
                 }`
               }
             >
@@ -92,15 +92,15 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* User info & logout */}
-      <div className="p-3 border-t border-[#1E293B] bg-[#0A111E]">
-        <div className="flex items-center justify-between p-2 rounded-lg bg-[#111C2E] border border-[#1E293B]">
+      <div className="p-3 border-t border-[var(--border)] bg-bg-surface-2">
+        <div className="flex items-center justify-between p-2 rounded-lg bg-bg-surface border border-[var(--border)]">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
               {user?.fullName.charAt(0) || 'U'}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-white truncate">{user?.fullName}</p>
-              <span className="inline-block text-[10px] font-medium text-blue-400 bg-blue-950/60 px-1.5 py-0.2 rounded border border-blue-800/40">
+              <p className="text-xs font-semibold text-text-primary truncate">{user?.fullName}</p>
+              <span className="inline-block text-[10px] font-medium text-accent-text bg-accent-light px-1.5 rounded border border-[var(--border)]">
                 {user?.role}
               </span>
             </div>
@@ -108,7 +108,7 @@ export const Sidebar: React.FC = () => {
           <button
             onClick={logout}
             title="Sign out"
-            className="p-1.5 rounded-md text-slate-400 hover:text-red-400 hover:bg-red-950/30 transition-colors"
+            className="p-1.5 rounded-md text-text-muted hover:text-[var(--critical)] hover:bg-[var(--critical-light)] transition-colors"
           >
             <LogOut className="w-4 h-4" />
           </button>

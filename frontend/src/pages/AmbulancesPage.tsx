@@ -6,11 +6,8 @@ import {
   MapPin,
   CheckCircle2,
   AlertTriangle,
-  Clock,
-  ShieldCheck,
   RefreshCw,
-  Navigation,
-  ArrowRight
+  Navigation
 } from 'lucide-react';
 import api from '../api/client';
 import { Ambulance, EmergencyRequest, AmbulanceAllocation } from '../types';
@@ -44,14 +41,12 @@ export const AmbulancesPage: React.FC = () => {
 
       setAmbulances(ambRes.data.content || []);
 
-      // Active triaged requests that need ambulance
       const candidates = (reqRes.data.content || []).filter(
         (r: EmergencyRequest) =>
           r.requestStatus === 'TRIAGED' || r.requestStatus === 'PENDING_TRIAGE'
       );
       setActiveRequests(candidates);
 
-      // Query param dispatchRequestId
       const params = new URLSearchParams(location.search);
       const qReqId = params.get('dispatchRequestId');
       if (qReqId) {
@@ -166,15 +161,15 @@ export const AmbulancesPage: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'AVAILABLE':
-        return 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+        return 'bg-[#DCFCE7] dark:bg-[var(--success-light)] text-[var(--success)] border-[#86EFAC]';
       case 'DISPATCHED':
-        return 'bg-blue-500/15 text-blue-400 border-blue-500/30';
+        return 'bg-[#DBEAFE] text-[#2563EB] border-[#BFDBFE]';
       case 'ON_SCENE':
-        return 'bg-purple-500/15 text-purple-400 border-purple-500/30';
+        return 'bg-[#EDE9FE] text-[#7C3AED] border-[#DDD6FE]';
       case 'RETURNING':
-        return 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+        return 'bg-[#FEF3C7] text-[#D97706] border-[#FDE68A]';
       default:
-        return 'bg-red-500/15 text-red-400 border-red-500/30';
+        return 'bg-[#FEE2E2] text-[#DC2626] border-[#FCA5A5]';
     }
   };
 
@@ -183,30 +178,30 @@ export const AmbulancesPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-            <Truck className="w-5 h-5 text-emerald-400" />
+          <h2 className="text-2xl font-bold tracking-tight text-text-primary flex items-center gap-2.5">
+            <Truck className="w-6 h-6 text-accent" />
             <span>Ambulance Fleet & Dispatch Center</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-text-secondary mt-1">
             Dijkstra road-network shortest path estimation & custom MergeSort capability ranking
           </p>
         </div>
 
         <button
           onClick={fetchData}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#111C2E] border border-[#1E293B] text-xs font-medium text-slate-300 hover:text-white"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-bg-surface border border-[var(--border)] hover:border-[var(--border-strong)] text-xs font-semibold text-text-primary transition-all shadow-sm"
         >
-          <RefreshCw className="w-3.5 h-3.5" />
+          <RefreshCw className="w-3.5 h-3.5 text-accent" />
           <span>Refresh Fleet</span>
         </button>
       </div>
 
       {msg && (
         <div
-          className={`p-3.5 rounded-xl border flex items-center gap-2.5 text-xs ${
+          className={`p-4 rounded-xl border flex items-center gap-3 text-xs shadow-sm ${
             msg.type === 'success'
-              ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
-              : 'bg-red-500/15 border-red-500/30 text-red-300'
+              ? 'bg-[#DCFCE7] dark:bg-[var(--success-light)] border-[#86EFAC] text-[var(--success)]'
+              : 'bg-[#FEE2E2] dark:bg-[var(--critical-light)] border-[#FCA5A5] text-[var(--critical)]'
           }`}
         >
           {msg.type === 'success' ? (
@@ -214,31 +209,31 @@ export const AmbulancesPage: React.FC = () => {
           ) : (
             <AlertTriangle className="w-4 h-4 flex-shrink-0" />
           )}
-          <span>{msg.text}</span>
+          <span className="font-semibold">{msg.text}</span>
         </div>
       )}
 
       {/* Dispatch Control Center */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Dispatch Actions */}
-        <div className="lg:col-span-2 p-5 rounded-2xl bg-[#111C2E] border border-[#1E293B] space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#1E293B]">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Zap className="w-4 h-4 text-amber-400" />
+        <div className="lg:col-span-2 p-6 rounded-2xl bg-bg-surface border border-[var(--border)] shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+            <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
+              <Zap className="w-4 h-4 text-accent" />
               <span>Intelligent Allocation Engine</span>
             </h3>
-            <span className="text-[11px] text-slate-400 font-mono">Dijkstra + MergeSort</span>
+            <span className="text-xs text-text-muted font-mono">Dijkstra + MergeSort</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">
+              <label className="block text-xs font-bold text-text-primary mb-1.5">
                 Target Emergency Request *
               </label>
               <select
                 value={selectedRequestId}
                 onChange={(e) => setSelectedRequestId(e.target.value ? Number(e.target.value) : '')}
-                className="w-full px-3 py-2.5 bg-[#0B1220] border border-[#1E293B] rounded-xl text-xs text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-3.5 py-2.5 bg-bg-surface-2 border border-[var(--border)] rounded-xl text-xs text-text-primary focus:outline-none focus:border-accent"
               >
                 <option value="">-- Choose triaged request --</option>
                 {activeRequests.map((r) => (
@@ -250,13 +245,13 @@ export const AmbulancesPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">
+              <label className="block text-xs font-bold text-text-primary mb-1.5">
                 Specific Unit (For Manual Dispatch)
               </label>
               <select
                 value={selectedAmbulanceId}
                 onChange={(e) => setSelectedAmbulanceId(e.target.value ? Number(e.target.value) : '')}
-                className="w-full px-3 py-2.5 bg-[#0B1220] border border-[#1E293B] rounded-xl text-xs text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-3.5 py-2.5 bg-bg-surface-2 border border-[var(--border)] rounded-xl text-xs text-text-primary focus:outline-none focus:border-accent"
               >
                 <option value="">-- Auto-select recommended --</option>
                 {ambulances
@@ -274,7 +269,7 @@ export const AmbulancesPage: React.FC = () => {
             <button
               onClick={handleAutoDispatch}
               disabled={dispatching || !selectedRequestId}
-              className="flex-1 py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-600/20 disabled:opacity-50 flex items-center justify-center gap-2 transition-all"
+              className="flex-1 py-2.5 px-4 bg-accent hover:bg-accent-hover text-white rounded-xl text-xs font-bold shadow-sm disabled:opacity-50 flex items-center justify-center gap-2 transition-all"
             >
               <Zap className="w-4 h-4" />
               <span>Auto-Dispatch Best Ambulance (Recommended)</span>
@@ -284,7 +279,7 @@ export const AmbulancesPage: React.FC = () => {
               <button
                 onClick={handleManualDispatch}
                 disabled={dispatching}
-                className="py-2.5 px-4 bg-[#0B1220] hover:bg-[#18253C] border border-[#1E293B] hover:border-slate-600 text-white rounded-xl text-xs font-semibold disabled:opacity-50 transition-all"
+                className="py-2.5 px-4 bg-bg-surface-2 hover:bg-bg-surface border border-[var(--border)] hover:border-[var(--border-strong)] text-text-primary rounded-xl text-xs font-bold disabled:opacity-50 transition-all shadow-sm"
               >
                 Manual Override
               </button>
@@ -293,26 +288,26 @@ export const AmbulancesPage: React.FC = () => {
         </div>
 
         {/* Right: Dijkstra Travel Time Calculator */}
-        <div className="p-5 rounded-2xl bg-[#111C2E] border border-[#1E293B] space-y-3">
-          <div className="flex items-center justify-between pb-2 border-b border-[#1E293B]">
-            <h3 className="text-xs font-bold text-white flex items-center gap-2">
-              <Navigation className="w-4 h-4 text-blue-400" />
+        <div className="p-6 rounded-2xl bg-bg-surface border border-[var(--border)] shadow-sm space-y-3.5">
+          <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+            <h3 className="text-xs font-bold text-text-primary flex items-center gap-2">
+              <Navigation className="w-4 h-4 text-accent" />
               <span>Dijkstra Shortest Path Probe</span>
             </h3>
-            <span className="text-[10px] text-slate-500 font-mono">Graph API</span>
+            <span className="text-[10px] text-text-muted font-mono">Graph API</span>
           </div>
 
-          <p className="text-[11px] text-slate-400 leading-tight">
+          <p className="text-xs text-text-secondary leading-tight">
             Queries graph adjacency-list with min-heap shortest path calculation.
           </p>
 
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div>
-              <label className="block text-[10px] text-slate-400 mb-1">Source Node</label>
+              <label className="block text-[10px] font-bold text-text-secondary mb-1">Source Node</label>
               <select
                 value={routeSource}
                 onChange={(e) => setRouteSource(e.target.value)}
-                className="w-full p-1.5 bg-[#0B1220] border border-[#1E293B] rounded text-xs text-white"
+                className="w-full p-2 bg-bg-surface-2 border border-[var(--border)] rounded-lg text-xs text-text-primary"
               >
                 <option value="1">Node 1: Hospital</option>
                 <option value="2">Node 2: North EMS</option>
@@ -324,11 +319,11 @@ export const AmbulancesPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] text-slate-400 mb-1">Destination Node</label>
+              <label className="block text-[10px] font-bold text-text-secondary mb-1">Destination Node</label>
               <select
                 value={routeDest}
                 onChange={(e) => setRouteDest(e.target.value)}
-                className="w-full p-1.5 bg-[#0B1220] border border-[#1E293B] rounded text-xs text-white"
+                className="w-full p-2 bg-bg-surface-2 border border-[var(--border)] rounded-lg text-xs text-text-primary"
               >
                 <option value="1">Node 1: Hospital</option>
                 <option value="2">Node 2: North EMS</option>
@@ -343,14 +338,14 @@ export const AmbulancesPage: React.FC = () => {
           <button
             onClick={testDijkstra}
             disabled={calcLoading}
-            className="w-full py-1.5 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-400 rounded text-xs font-semibold"
+            className="w-full py-2 bg-accent-light hover:bg-accent hover:text-white border border-[var(--border)] text-accent rounded-xl text-xs font-bold transition-all shadow-sm"
           >
             {calcLoading ? 'Computing...' : 'Calculate Route Weight'}
           </button>
 
           {travelResult && (
-            <div className="p-2 rounded bg-[#0B1220] border border-[#1E293B] text-[11px] text-slate-300">
-              <span className="font-semibold text-emerald-400">
+            <div className="p-3 rounded-xl bg-bg-surface-2 border border-[var(--border)] text-xs text-text-primary shadow-sm">
+              <span className="font-bold text-[var(--success)]">
                 {travelResult.travelTimeMinutes >= 0
                   ? `Estimated Travel: ${travelResult.travelTimeMinutes} mins`
                   : 'Unreachable Route'}
@@ -361,44 +356,46 @@ export const AmbulancesPage: React.FC = () => {
       </div>
 
       {/* Fleet Inventory Table */}
-      <div className="bg-[#111C2E] border border-[#1E293B] rounded-xl overflow-hidden shadow-sm">
-        <div className="px-5 py-3 border-b border-[#1E293B] flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-white">Ambulance Fleet Status</h3>
-          <span className="text-xs text-slate-400">{ambulances.length} Registered Units</span>
+      <div className="bg-bg-surface border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
+        <div className="px-6 py-4 border-b border-[var(--border)] flex items-center justify-between">
+          <h3 className="text-sm font-bold text-text-primary">Ambulance Fleet Status</h3>
+          <span className="text-xs text-text-muted">{ambulances.length} Registered Units</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#0B1220] border-b border-[#1E293B] text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+            <thead className="bg-bg-surface-2/60 border-b border-[var(--border)] text-text-muted font-bold uppercase tracking-wider text-[11px]">
               <tr>
-                <th className="py-3 px-4">Registration</th>
-                <th className="py-3 px-4">Type</th>
-                <th className="py-3 px-4">Equipment</th>
-                <th className="py-3 px-4">Staff</th>
-                <th className="py-3 px-4">Location Station</th>
-                <th className="py-3 px-4">Current Status</th>
+                <th className="py-3.5 px-5">Registration</th>
+                <th className="py-3.5 px-5">Type</th>
+                <th className="py-3.5 px-5">Equipment</th>
+                <th className="py-3.5 px-5">Staff</th>
+                <th className="py-3.5 px-5">Location Station</th>
+                <th className="py-3.5 px-5">Current Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1E293B] text-slate-300">
+            <tbody className="divide-y divide-[var(--border)] text-text-primary">
               {ambulances.map((a) => (
-                <tr key={a.ambulanceId} className="hover:bg-[#18253C]/40 transition-colors">
-                  <td className="py-3.5 px-4 font-mono font-bold text-white flex items-center gap-2">
-                    <Truck className="w-4 h-4 text-slate-500" />
+                <tr key={a.ambulanceId} className="hover:bg-bg-surface-2/60 transition-colors">
+                  <td className="py-4 px-5 font-mono font-bold text-text-primary flex items-center gap-2">
+                    <Truck className="w-4 h-4 text-accent" />
                     <span>{a.registrationNumber}</span>
                   </td>
-                  <td className="py-3.5 px-4 font-medium">{a.ambulanceType}</td>
-                  <td className="py-3.5 px-4">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#0B1220] border border-[#1E293B] text-slate-300">
+                  <td className="py-4 px-5 font-bold text-text-primary">{a.ambulanceType}</td>
+                  <td className="py-4 px-5">
+                    <span className="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-accent-light text-accent border border-[var(--border)]">
                       {a.equipmentLevel}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 text-slate-400">{a.availableMedicalPersonnel} Personnel</td>
-                  <td className="py-3.5 px-4 text-slate-300 flex items-center gap-1.5 mt-2">
-                    <MapPin className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
-                    <span>{a.currentNodeName || 'Hospital Base'}</span>
+                  <td className="py-4 px-5 text-text-secondary">{a.availableMedicalPersonnel} Personnel</td>
+                  <td className="py-4 px-5 text-text-secondary">
+                    <div className="flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                      <span>{a.currentNodeName || 'Hospital Base'}</span>
+                    </div>
                   </td>
-                  <td className="py-3.5 px-4">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${getStatusBadge(a.currentStatus)}`}>
+                  <td className="py-4 px-5">
+                    <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold border ${getStatusBadge(a.currentStatus)}`}>
                       {a.currentStatus}
                     </span>
                   </td>
@@ -410,29 +407,29 @@ export const AmbulancesPage: React.FC = () => {
       </div>
 
       {/* Active Dispatched Ambulances Table */}
-      <div className="bg-[#111C2E] border border-[#1E293B] rounded-xl overflow-hidden shadow-sm">
-        <div className="px-5 py-3 border-b border-[#1E293B] flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-white">Active Ambulance Dispatches</h3>
-          <span className="text-xs text-slate-400">Live Mission Execution</span>
+      <div className="bg-bg-surface border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
+        <div className="px-6 py-4 border-b border-[var(--border)] flex items-center justify-between">
+          <h3 className="text-sm font-bold text-text-primary">Active Ambulance Dispatches</h3>
+          <span className="text-xs text-text-muted">Live Mission Execution</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#0B1220] border-b border-[#1E293B] text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+            <thead className="bg-bg-surface-2/60 border-b border-[var(--border)] text-text-muted font-bold uppercase tracking-wider text-[11px]">
               <tr>
-                <th className="py-3 px-4">Request #</th>
-                <th className="py-3 px-4">Patient</th>
-                <th className="py-3 px-4">Ambulance</th>
-                <th className="py-3 px-4">Dispatched At</th>
-                <th className="py-3 px-4">Dispatcher</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3.5 px-5">Request #</th>
+                <th className="py-3.5 px-5">Patient</th>
+                <th className="py-3.5 px-5">Ambulance</th>
+                <th className="py-3.5 px-5">Dispatched At</th>
+                <th className="py-3.5 px-5">Dispatcher</th>
+                <th className="py-3.5 px-5">Status</th>
+                <th className="py-3.5 px-5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1E293B] text-slate-300">
+            <tbody className="divide-y divide-[var(--border)] text-text-primary">
               {activeAllocations.filter((a) => a.status === 'ACTIVE').length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-slate-500">
+                  <td colSpan={7} className="py-12 text-center text-text-muted font-medium">
                     No active ambulance missions in progress.
                   </td>
                 </tr>
@@ -440,29 +437,29 @@ export const AmbulancesPage: React.FC = () => {
                 activeAllocations
                   .filter((a) => a.status === 'ACTIVE')
                   .map((alloc) => (
-                    <tr key={alloc.allocationId} className="hover:bg-[#18253C]/40">
-                      <td className="py-3.5 px-4 font-mono font-bold text-blue-400">{alloc.requestNumber}</td>
-                      <td className="py-3.5 px-4 font-semibold text-white">{alloc.patientName}</td>
-                      <td className="py-3.5 px-4 font-mono text-emerald-400 font-medium">{alloc.ambulanceRegistration}</td>
-                      <td className="py-3.5 px-4 text-slate-400">{new Date(alloc.dispatchTime).toLocaleTimeString()}</td>
-                      <td className="py-3.5 px-4 text-slate-300">{alloc.allocatedBy}</td>
-                      <td className="py-3.5 px-4">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                    <tr key={alloc.allocationId} className="hover:bg-bg-surface-2/60">
+                      <td className="py-4 px-5 font-mono font-bold text-accent">{alloc.requestNumber}</td>
+                      <td className="py-4 px-5 font-bold text-text-primary">{alloc.patientName}</td>
+                      <td className="py-4 px-5 font-mono text-text-primary font-bold">{alloc.ambulanceRegistration}</td>
+                      <td className="py-4 px-5 text-text-secondary">{new Date(alloc.dispatchTime).toLocaleTimeString()}</td>
+                      <td className="py-4 px-5 text-text-secondary">{alloc.allocatedBy}</td>
+                      <td className="py-4 px-5">
+                        <span className="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]">
                           {alloc.status}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 text-right space-x-1.5">
+                      <td className="py-4 px-5 text-right space-x-2">
                         {!alloc.arrivalTime && (
                           <button
                             onClick={() => handleMarkArrived(alloc.allocationId)}
-                            className="px-2 py-1 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 rounded text-[11px] font-semibold"
+                            className="px-3 py-1 bg-[#EDE9FE] border border-[#DDD6FE] text-[#7C3AED] rounded-lg text-xs font-bold hover:opacity-80 transition-all shadow-sm"
                           >
                             Mark Arrived
                           </button>
                         )}
                         <button
                           onClick={() => handleComplete(alloc.allocationId)}
-                          className="px-2 py-1 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-300 rounded text-[11px] font-semibold"
+                          className="px-3 py-1 bg-[#DCFCE7] dark:bg-[var(--success-light)] border border-[#86EFAC] text-[var(--success)] rounded-lg text-xs font-bold hover:opacity-80 transition-all shadow-sm"
                         >
                           Complete Run
                         </button>

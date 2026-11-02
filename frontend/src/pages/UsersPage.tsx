@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ShieldCheck, Plus, X, CheckCircle2, AlertTriangle, UserCheck, Lock, Mail, User as UserIcon } from 'lucide-react';
+import { ShieldCheck, Plus, X } from 'lucide-react';
 import api from '../api/client';
 import { User, Role } from '../types';
 
@@ -65,18 +65,18 @@ export const UsersPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-blue-400" />
+          <h2 className="text-2xl font-bold tracking-tight text-text-primary flex items-center gap-2.5">
+            <ShieldCheck className="w-6 h-6 text-accent" />
             <span>Staff & User Administration</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-text-secondary mt-1">
             Role-based access management, credential provisioning, and personnel authorization
           </p>
         </div>
 
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-600/20 transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent hover:bg-accent-hover text-white text-xs font-semibold shadow-sm transition-all"
         >
           <Plus className="w-4 h-4" />
           <span>Provision New Account</span>
@@ -84,62 +84,62 @@ export const UsersPage: React.FC = () => {
       </div>
 
       {/* Users Table */}
-      <div className="bg-[#111C2E] border border-[#1E293B] rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-bg-surface border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#0B1220] border-b border-[#1E293B] text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+            <thead className="bg-bg-surface-2/60 border-b border-[var(--border)] text-text-muted font-bold uppercase tracking-wider text-[11px]">
               <tr>
-                <th className="py-3 px-4">User ID</th>
-                <th className="py-3 px-4">Staff Member</th>
-                <th className="py-3 px-4">Email</th>
-                <th className="py-3 px-4">Role</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Registered</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3.5 px-5">User ID</th>
+                <th className="py-3.5 px-5">Staff Member</th>
+                <th className="py-3.5 px-5">Email</th>
+                <th className="py-3.5 px-5">Role</th>
+                <th className="py-3.5 px-5">Status</th>
+                <th className="py-3.5 px-5">Registered</th>
+                <th className="py-3.5 px-5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1E293B] text-slate-300">
+            <tbody className="divide-y divide-[var(--border)] text-text-primary">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-slate-400">
-                    <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-                    <span>Loading staff directory...</span>
+                  <td colSpan={7} className="py-16 text-center text-text-muted">
+                    <div className="w-7 h-7 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-2.5" />
+                    <span className="font-semibold">Loading staff directory...</span>
                   </td>
                 </tr>
               ) : (
                 users.map((u) => (
-                  <tr key={u.userId} className="hover:bg-[#18253C]/40">
-                    <td className="py-3.5 px-4 font-mono font-medium text-slate-400">#{u.userId}</td>
-                    <td className="py-3.5 px-4 font-semibold text-white">{u.fullName}</td>
-                    <td className="py-3.5 px-4 text-slate-300 font-mono">{u.email}</td>
-                    <td className="py-3.5 px-4">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                  <tr key={u.userId} className="hover:bg-bg-surface-2/60 transition-colors">
+                    <td className="py-4 px-5 font-mono font-medium text-text-muted">#{u.userId}</td>
+                    <td className="py-4 px-5 font-bold text-text-primary">{u.fullName}</td>
+                    <td className="py-4 px-5 text-text-secondary font-mono">{u.email}</td>
+                    <td className="py-4 px-5">
+                      <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold border ${
                         u.role === 'ADMIN'
-                          ? 'bg-purple-500/15 text-purple-400 border-purple-500/30'
+                          ? 'bg-[#EDE9FE] text-[#7C3AED] border-[#DDD6FE]'
                           : u.role === 'DISPATCHER'
-                          ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
-                          : 'bg-blue-500/15 text-blue-400 border-blue-500/30'
+                          ? 'bg-[#FEF3C7] text-[#D97706] border-[#FDE68A]'
+                          : 'bg-accent-light text-accent border-[var(--border)]'
                       }`}>
                         {u.role}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                    <td className="py-4 px-5">
+                      <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold border ${
                         u.active
-                          ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                          : 'bg-red-500/15 text-red-400 border-red-500/30'
+                          ? 'bg-[#DCFCE7] dark:bg-[var(--success-light)] text-[var(--success)] border-[#86EFAC]'
+                          : 'bg-[#FEE2E2] dark:bg-[var(--critical-light)] text-[var(--critical)] border-[#FCA5A5]'
                       }`}>
                         {u.active ? 'ACTIVE' : 'DEACTIVATED'}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-400">{new Date(u.createdAt).toLocaleDateString()}</td>
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="py-4 px-5 text-text-secondary">{new Date(u.createdAt).toLocaleDateString()}</td>
+                    <td className="py-4 px-5 text-right">
                       <button
                         onClick={() => handleToggleActive(u.userId, u.active)}
-                        className={`px-2.5 py-1 rounded text-xs font-semibold transition-colors ${
+                        className={`px-3 py-1 rounded-xl text-xs font-bold transition-all shadow-sm ${
                           u.active
-                            ? 'bg-red-600/15 hover:bg-red-600/25 border border-red-500/30 text-red-400'
-                            : 'bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/30 text-emerald-400'
+                            ? 'bg-[#FEE2E2] dark:bg-[var(--critical-light)] border border-[#FCA5A5] text-[var(--critical)] hover:opacity-80'
+                            : 'bg-[#DCFCE7] dark:bg-[var(--success-light)] border border-[#86EFAC] text-[var(--success)] hover:opacity-80'
                         }`}
                       >
                         {u.active ? 'Deactivate' : 'Activate'}
@@ -155,67 +155,67 @@ export const UsersPage: React.FC = () => {
 
       {/* Create User Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#111C2E] border border-[#1E293B] rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-bg-surface border border-[var(--border)] rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
             <button
               onClick={() => setShowModal(false)}
-              className="absolute right-4 top-4 text-slate-400 hover:text-white"
+              className="absolute right-4 top-4 text-text-muted hover:text-text-primary"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="text-base font-bold text-white mb-1">Provision Staff Account</h3>
-            <p className="text-xs text-slate-400 mb-4">Assign role and system access</p>
+            <h3 className="text-base font-bold text-text-primary mb-1">Provision Staff Account</h3>
+            <p className="text-xs text-text-secondary mb-4">Assign role and system access</p>
 
             {error && (
-              <div className="mb-4 p-3 rounded bg-red-500/10 border border-red-500/30 text-xs text-red-400">
+              <div className="mb-4 p-3 rounded-xl bg-[#FEF2F2] dark:bg-[var(--critical-light)] border border-[#FCA5A5] text-xs text-[var(--critical)]">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleCreateUser} className="space-y-3.5">
+            <form onSubmit={handleCreateUser} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Full Name *</label>
+                <label className="block text-xs font-bold text-text-primary mb-1.5">Full Name *</label>
                 <input
                   type="text"
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="e.g. Dr. Robert House"
-                  className="w-full px-3 py-2 bg-[#0B1220] border border-[#1E293B] rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3.5 py-2.5 bg-bg-surface-2 border border-[var(--border)] rounded-xl text-xs text-text-primary focus:outline-none focus:border-accent"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Email Address *</label>
+                <label className="block text-xs font-bold text-text-primary mb-1.5">Email Address *</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="rhouse@medipriority.com"
-                  className="w-full px-3 py-2 bg-[#0B1220] border border-[#1E293B] rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3.5 py-2.5 bg-bg-surface-2 border border-[var(--border)] rounded-xl text-xs text-text-primary focus:outline-none focus:border-accent"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Temporary Password *</label>
+                <label className="block text-xs font-bold text-text-primary mb-1.5">Temporary Password *</label>
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full px-3 py-2 bg-[#0B1220] border border-[#1E293B] rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3.5 py-2.5 bg-bg-surface-2 border border-[var(--border)] rounded-xl text-xs text-text-primary focus:outline-none focus:border-accent"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Staff Role *</label>
+                <label className="block text-xs font-bold text-text-primary mb-1.5">Staff Role *</label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value as Role)}
-                  className="w-full px-3 py-2 bg-[#0B1220] border border-[#1E293B] rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3.5 py-2.5 bg-bg-surface-2 border border-[var(--border)] rounded-xl text-xs text-text-primary focus:outline-none focus:border-accent"
                 >
                   <option value="MEDICAL_OFFICER">MEDICAL_OFFICER (Clinical Triage & Bed Allocation)</option>
                   <option value="DISPATCHER">DISPATCHER (Incident Intake & Ambulance Dispatch)</option>
@@ -223,18 +223,18 @@ export const UsersPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="pt-2 flex justify-end gap-2">
+              <div className="pt-2 flex justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-3 py-1.5 rounded-lg bg-[#0B1220] border border-[#1E293B] text-xs font-medium text-slate-400 hover:text-white"
+                  className="px-4 py-2 rounded-xl bg-bg-surface-2 border border-[var(--border)] text-xs font-semibold text-text-secondary hover:text-text-primary"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white shadow-md shadow-blue-600/20 disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl bg-accent hover:bg-accent-hover text-xs font-bold text-white shadow-sm disabled:opacity-50"
                 >
                   {submitting ? 'Creating...' : 'Provision User'}
                 </button>

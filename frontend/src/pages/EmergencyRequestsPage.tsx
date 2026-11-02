@@ -4,18 +4,10 @@ import {
   AlertCircle,
   Plus,
   MapPin,
-  Clock,
-  HeartPulse,
-  Truck,
-  Bed,
-  CheckCircle2,
-  XCircle,
-  X,
-  Filter
+  X
 } from 'lucide-react';
 import api from '../api/client';
 import { EmergencyRequest, Patient, RequestStatus, BedType } from '../types';
-import { useAuth } from '../context/AuthContext';
 
 export const EmergencyRequestsPage: React.FC = () => {
   const [requests, setRequests] = useState<EmergencyRequest[]>([]);
@@ -39,10 +31,8 @@ export const EmergencyRequestsPage: React.FC = () => {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const { hasRole } = useAuth();
 
   useEffect(() => {
-    // Check if redirected with newForPatient query param
     const params = new URLSearchParams(location.search);
     const patientIdParam = params.get('newForPatient');
     if (patientIdParam) {
@@ -116,21 +106,21 @@ export const EmergencyRequestsPage: React.FC = () => {
   const getStatusBadge = (status: RequestStatus) => {
     switch (status) {
       case 'PENDING_TRIAGE':
-        return 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30';
+        return 'bg-[#FEF3C7] text-[#D97706] border-[#FDE68A]';
       case 'TRIAGED':
-        return 'bg-blue-500/15 text-blue-400 border-blue-500/30';
+        return 'bg-[#DBEAFE] text-[#2563EB] border-[#BFDBFE]';
       case 'AMBULANCE_DISPATCHED':
-        return 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+        return 'bg-[#FEF3C7] text-[#D97706] border-[#FDE68A]';
       case 'ARRIVED':
-        return 'bg-purple-500/15 text-purple-400 border-purple-500/30';
+        return 'bg-[#EDE9FE] text-[#7C3AED] border-[#DDD6FE]';
       case 'BED_RESERVED':
-        return 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30';
+        return 'bg-accent-light text-accent border-[var(--border)]';
       case 'ADMITTED':
-        return 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+        return 'bg-[#DCFCE7] text-[#16A34A] border-[#BBF7D0]';
       case 'CLOSED':
-        return 'bg-slate-700 text-slate-300 border-slate-600';
+        return 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700';
       default:
-        return 'bg-red-500/15 text-red-400 border-red-500/30';
+        return 'bg-[#FEE2E2] text-[#DC2626] border-[#FCA5A5]';
     }
   };
 
@@ -139,18 +129,18 @@ export const EmergencyRequestsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-red-500" />
+          <h2 className="text-2xl font-bold tracking-tight text-text-primary flex items-center gap-2.5">
+            <AlertCircle className="w-6 h-6 text-[var(--critical)]" />
             <span>Emergency Requests</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-text-secondary mt-1">
             Real-time incident dispatch, status transitions, and bed allocation pipelines
           </p>
         </div>
 
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-semibold shadow-md shadow-red-600/20 transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--critical)] hover:opacity-90 text-white text-xs font-semibold shadow-sm transition-all"
         >
           <Plus className="w-4 h-4" />
           <span>New Emergency Incident</span>
@@ -175,10 +165,10 @@ export const EmergencyRequestsPage: React.FC = () => {
               setStatusFilter(tab.value);
               setPage(0);
             }}
-            className={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition-all ${
+            className={`px-4 py-1.5 rounded-full font-bold whitespace-nowrap transition-all shadow-sm ${
               statusFilter === tab.value
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-[#111C2E] border border-[#1E293B] text-slate-400 hover:text-white'
+                ? 'bg-accent text-white shadow-sm'
+                : 'bg-bg-surface border border-[var(--border)] text-text-secondary hover:text-text-primary hover:border-[var(--border-strong)]'
             }`}
           >
             {tab.label}
@@ -187,84 +177,86 @@ export const EmergencyRequestsPage: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-[#111C2E] border border-[#1E293B] rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-bg-surface border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-[#0B1220] border-b border-[#1E293B] text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+            <thead className="bg-bg-surface-2/60 border-b border-[var(--border)] text-text-muted font-bold uppercase tracking-wider text-[11px]">
               <tr>
-                <th className="py-3 px-4">Request #</th>
-                <th className="py-3 px-4">Patient Name</th>
-                <th className="py-3 px-4">Current Status</th>
-                <th className="py-3 px-4">Triage</th>
-                <th className="py-3 px-4">Pickup Location</th>
-                <th className="py-3 px-4">Bed Requirement</th>
-                <th className="py-3 px-4">Logged Time</th>
-                <th className="py-3 px-4 text-right">Clinical Actions</th>
+                <th className="py-3.5 px-5">Request #</th>
+                <th className="py-3.5 px-5">Patient Name</th>
+                <th className="py-3.5 px-5">Current Status</th>
+                <th className="py-3.5 px-5">Triage</th>
+                <th className="py-3.5 px-5">Pickup Location</th>
+                <th className="py-3.5 px-5">Bed Requirement</th>
+                <th className="py-3.5 px-5">Logged Time</th>
+                <th className="py-3.5 px-5 text-right">Clinical Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1E293B] text-slate-300">
+            <tbody className="divide-y divide-[var(--border)] text-text-primary">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-slate-400">
-                    <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-                    <span>Loading emergency records...</span>
+                  <td colSpan={8} className="py-16 text-center text-text-muted">
+                    <div className="w-7 h-7 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-2.5" />
+                    <span className="font-semibold">Loading emergency records...</span>
                   </td>
                 </tr>
               ) : requests.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-slate-400">
+                  <td colSpan={8} className="py-16 text-center text-text-muted font-medium">
                     No emergency requests matching the selected filter.
                   </td>
                 </tr>
               ) : (
                 requests.map((r) => (
-                  <tr key={r.requestId} className="hover:bg-[#18253C]/40 transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-blue-400">
+                  <tr key={r.requestId} className="hover:bg-bg-surface-2/60 transition-colors">
+                    <td className="py-4 px-5 font-mono font-bold text-accent">
                       {r.requestNumber}
                     </td>
-                    <td className="py-3.5 px-4 font-semibold text-white">{r.patientName}</td>
-                    <td className="py-3.5 px-4">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${getStatusBadge(r.requestStatus)}`}>
+                    <td className="py-4 px-5 font-bold text-text-primary">{r.patientName}</td>
+                    <td className="py-4 px-5">
+                      <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold border ${getStatusBadge(r.requestStatus)}`}>
                         {r.requestStatus.replace('_', ' ')}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-4 px-5">
                       {r.currentTriageCategory ? (
                         <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                          className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold border ${
                             r.currentTriageCategory === 'RED'
-                              ? 'bg-red-500/20 text-red-400 border-red-500/30'
+                              ? 'bg-[#FEE2E2] text-[#DC2626] border-[#FCA5A5]'
                               : r.currentTriageCategory === 'ORANGE'
-                              ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                              ? 'bg-[#FEF3C7] text-[#D97706] border-[#FDE68A]'
                               : r.currentTriageCategory === 'YELLOW'
-                              ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-                              : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                              ? 'bg-[#FEFCE8] text-[#CA8A04] border-[#FDE047]'
+                              : 'bg-[#DCFCE7] text-[#16A34A] border-[#BBF7D0]'
                           }`}
                         >
                           {r.currentTriageCategory}
                         </span>
                       ) : (
-                        <span className="text-slate-500 text-[11px] italic">Untriaged</span>
+                        <span className="text-text-muted text-[11px] italic">Untriaged</span>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-300 max-w-xs truncate flex items-center gap-1.5 mt-2">
-                      <MapPin className="w-3.5 h-3.5 text-slate-500 flex-shrink-0" />
-                      <span>{r.pickupLocation}</span>
+                    <td className="py-4 px-5 text-text-secondary max-w-xs truncate">
+                      <div className="flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-text-muted flex-shrink-0" />
+                        <span className="truncate">{r.pickupLocation}</span>
+                      </div>
                     </td>
-                    <td className="py-3.5 px-4">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#0B1220] border border-[#1E293B] text-slate-300">
+                    <td className="py-4 px-5">
+                      <span className="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-accent-light text-accent border border-[var(--border)]">
                         {r.requiredBedType || 'GENERAL'}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-400">
+                    <td className="py-4 px-5 text-text-secondary">
                       {new Date(r.createdAt).toLocaleTimeString()}
                     </td>
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="py-4 px-5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         {r.requestStatus === 'PENDING_TRIAGE' && (
                           <button
                             onClick={() => navigate(`/triage?requestId=${r.requestId}`)}
-                            className="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-amber-300 text-[11px] font-semibold"
+                            className="px-3 py-1 rounded-lg bg-[#FFFBEB] dark:bg-[var(--warning-light)] border border-[#FCD34D] text-[var(--warning)] hover:opacity-80 text-[11px] font-bold transition-all shadow-sm"
                           >
                             Assess Triage
                           </button>
@@ -273,7 +265,7 @@ export const EmergencyRequestsPage: React.FC = () => {
                         {r.requestStatus === 'TRIAGED' && (
                           <button
                             onClick={() => navigate(`/ambulances?dispatchRequestId=${r.requestId}`)}
-                            className="px-2 py-1 rounded bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-400 text-[11px] font-semibold"
+                            className="px-3 py-1 rounded-lg bg-accent-light border border-[var(--border)] text-accent hover:bg-accent hover:text-white text-[11px] font-bold transition-all shadow-sm"
                           >
                             Dispatch Amb
                           </button>
@@ -282,7 +274,7 @@ export const EmergencyRequestsPage: React.FC = () => {
                         {(r.requestStatus === 'ARRIVED' || r.requestStatus === 'AMBULANCE_DISPATCHED') && (
                           <button
                             onClick={() => navigate(`/beds?assignRequestId=${r.requestId}`)}
-                            className="px-2 py-1 rounded bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 text-[11px] font-semibold"
+                            className="px-3 py-1 rounded-lg bg-bg-surface-2 border border-[var(--border)] text-text-primary hover:border-[var(--border-strong)] text-[11px] font-bold transition-all shadow-sm"
                           >
                             Reserve Bed
                           </button>
@@ -298,20 +290,20 @@ export const EmergencyRequestsPage: React.FC = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-4 py-3 border-t border-[#1E293B] flex items-center justify-between text-xs text-slate-400">
+          <div className="px-5 py-3.5 border-t border-[var(--border)] flex items-center justify-between text-xs text-text-secondary">
             <span>Page {page + 1} of {totalPages}</span>
-            <div className="flex gap-1.5">
+            <div className="flex gap-2">
               <button
                 disabled={page === 0}
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
-                className="px-3 py-1 rounded bg-[#0B1220] border border-[#1E293B] disabled:opacity-40 hover:text-white"
+                className="px-3.5 py-1.5 rounded-lg bg-bg-surface-2 border border-[var(--border)] disabled:opacity-40 hover:text-text-primary text-xs font-semibold"
               >
                 Previous
               </button>
               <button
                 disabled={page >= totalPages - 1}
                 onClick={() => setPage((p) => p + 1)}
-                className="px-3 py-1 rounded bg-[#0B1220] border border-[#1E293B] disabled:opacity-40 hover:text-white"
+                className="px-3.5 py-1.5 rounded-lg bg-bg-surface-2 border border-[var(--border)] disabled:opacity-40 hover:text-text-primary text-xs font-semibold"
               >
                 Next
               </button>
@@ -322,32 +314,32 @@ export const EmergencyRequestsPage: React.FC = () => {
 
       {/* Create Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#111C2E] border border-[#1E293B] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-bg-surface border border-[var(--border)] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
             <button
               onClick={() => setShowModal(false)}
-              className="absolute right-4 top-4 text-slate-400 hover:text-white"
+              className="absolute right-4 top-4 text-text-muted hover:text-text-primary"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="text-base font-bold text-white mb-1">Create Emergency Request</h3>
-            <p className="text-xs text-slate-400 mb-4">Log incoming emergency 911/EMS call</p>
+            <h3 className="text-base font-bold text-text-primary mb-1">Create Emergency Request</h3>
+            <p className="text-xs text-text-secondary mb-4">Log incoming emergency 911/EMS call</p>
 
             {error && (
-              <div className="mb-4 p-3 rounded bg-red-500/10 border border-red-500/30 text-xs text-red-400">
+              <div className="mb-4 p-3 rounded-xl bg-[#FEF2F2] dark:bg-[var(--critical-light)] border border-[#FCA5A5] text-xs text-[var(--critical)]">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleCreateRequest} className="space-y-3.5">
+            <form onSubmit={handleCreateRequest} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Select Patient *</label>
+                <label className="block text-xs font-bold text-text-primary mb-1.5">Select Patient *</label>
                 <select
                   required
                   value={selectedPatientId}
                   onChange={(e) => setSelectedPatientId(e.target.value ? Number(e.target.value) : '')}
-                  className="w-full px-3 py-2 bg-[#0B1220] border border-[#1E293B] rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3.5 py-2.5 bg-bg-surface-2 border border-[var(--border)] rounded-xl text-xs text-text-primary focus:outline-none focus:border-accent"
                 >
                   <option value="">-- Choose registered patient --</option>
                   {patients.map((p) => (
@@ -359,44 +351,44 @@ export const EmergencyRequestsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Pickup Location Address *</label>
+                <label className="block text-xs font-bold text-text-primary mb-1.5">Pickup Location Address *</label>
                 <input
                   type="text"
                   required
                   value={pickupLocation}
                   onChange={(e) => setPickupLocation(e.target.value)}
                   placeholder="e.g. 742 Evergreen Terrace, Downtown Plaza"
-                  className="w-full px-3 py-2 bg-[#0B1220] border border-[#1E293B] rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3.5 py-2.5 bg-bg-surface-2 border border-[var(--border)] rounded-xl text-xs text-text-primary focus:outline-none focus:border-accent"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Latitude</label>
+                  <label className="block text-xs font-bold text-text-primary mb-1.5">Latitude</label>
                   <input
                     type="text"
                     value={pickupLatitude}
                     onChange={(e) => setPickupLatitude(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0B1220] border border-[#1E293B] rounded-lg text-xs font-mono text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3.5 py-2.5 bg-bg-surface-2 border border-[var(--border)] rounded-xl text-xs font-mono text-text-primary focus:outline-none focus:border-accent"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Longitude</label>
+                  <label className="block text-xs font-bold text-text-primary mb-1.5">Longitude</label>
                   <input
                     type="text"
                     value={pickupLongitude}
                     onChange={(e) => setPickupLongitude(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0B1220] border border-[#1E293B] rounded-lg text-xs font-mono text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3.5 py-2.5 bg-bg-surface-2 border border-[var(--border)] rounded-xl text-xs font-mono text-text-primary focus:outline-none focus:border-accent"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Anticipated Bed Type</label>
+                <label className="block text-xs font-bold text-text-primary mb-1.5">Anticipated Bed Type</label>
                 <select
                   value={requiredBedType}
                   onChange={(e) => setRequiredBedType(e.target.value as BedType)}
-                  className="w-full px-3 py-2 bg-[#0B1220] border border-[#1E293B] rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3.5 py-2.5 bg-bg-surface-2 border border-[var(--border)] rounded-xl text-xs text-text-primary focus:outline-none focus:border-accent"
                 >
                   <option value="EMERGENCY">Emergency Trauma Bed</option>
                   <option value="ICU">Intensive Care Unit (ICU)</option>
@@ -404,18 +396,18 @@ export const EmergencyRequestsPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="pt-2 flex justify-end gap-2">
+              <div className="pt-2 flex justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-3 py-1.5 rounded-lg bg-[#0B1220] border border-[#1E293B] text-xs font-medium text-slate-400 hover:text-white"
+                  className="px-4 py-2 rounded-xl bg-bg-surface-2 border border-[var(--border)] text-xs font-semibold text-text-secondary hover:text-text-primary"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-xs font-semibold text-white shadow-md shadow-red-600/20 disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl bg-[var(--critical)] hover:opacity-90 text-xs font-semibold text-white shadow-sm disabled:opacity-50"
                 >
                   {submitting ? 'Creating...' : 'Log Incident'}
                 </button>

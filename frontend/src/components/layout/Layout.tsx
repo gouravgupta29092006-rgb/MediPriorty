@@ -5,7 +5,7 @@ import { Navbar } from './Navbar';
 
 export const Layout: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#0B1220] flex text-slate-100">
+    <div className="min-h-screen bg-bg-primary flex text-text-primary">
       <Sidebar />
       <div className="flex-1 ml-64 flex flex-col min-h-screen">
         <Navbar />

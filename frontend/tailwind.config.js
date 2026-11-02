@@ -4,27 +4,45 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        brand: {
-          bg: '#0B1220',
-          sidebar: '#0D1728',
-          surface: '#111C2E',
-          surfaceHover: '#18253C',
-          border: '#1E293B',
-          blue: '#2563EB',
-          red: '#DC2626',
-          orange: '#F59E0B',
-          yellow: '#EAB308',
-          green: '#16A34A',
-          muted: '#94A3B8',
-          text: '#F8FAFC'
-        }
+        bg: {
+          primary: 'var(--bg-primary)',
+          surface: 'var(--bg-surface)',
+          'surface-2': 'var(--bg-surface-2)',
+          sidebar: 'var(--bg-sidebar)',
+        },
+        text: {
+          primary: 'var(--text-primary)',
+          secondary: 'var(--text-secondary)',
+          muted: 'var(--text-muted)',
+        },
+        border: {
+          DEFAULT: 'var(--border)',
+          strong: 'var(--border-strong)',
+        },
+        accent: {
+          DEFAULT: 'var(--accent)',
+          hover: 'var(--accent-hover)',
+          light: 'var(--accent-light)',
+          text: 'var(--accent-text)',
+        },
+        triage: {
+          red: '#D94A4A',
+          'red-bg': '#FEE2E2',
+          orange: '#D97706',
+          'orange-bg': '#FEF3C7',
+          yellow: '#CA8A04',
+          'yellow-bg': '#FEF9C3',
+          green: '#168653',
+          'green-bg': '#DCFCE7',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
-      }
+      },
     },
   },
   plugins: [],

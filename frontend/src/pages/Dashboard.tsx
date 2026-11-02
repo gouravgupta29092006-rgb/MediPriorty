@@ -2,14 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   AlertTriangle,
-  Clock,
   Truck,
   Bed,
   Layers,
   ArrowUpRight,
   RefreshCw,
   CheckCircle2,
-  AlertCircle,
   Activity,
   HeartPulse
 } from 'lucide-react';
@@ -64,9 +62,9 @@ export const Dashboard: React.FC = () => {
 
   if (loading && !data) {
     return (
-      <div className="flex items-center justify-center h-96 text-slate-400">
+      <div className="flex items-center justify-center h-96 text-text-muted">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
           <p className="text-sm">Aggregating hospital metrics...</p>
         </div>
       </div>
@@ -83,29 +81,30 @@ export const Dashboard: React.FC = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+          <h2 className="text-2xl font-bold tracking-tight text-text-primary flex items-center gap-2.5">
+            <Activity className="w-6 h-6 text-accent" />
             <span>Emergency Command Overview</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[var(--success)] animate-pulse" />
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-text-secondary mt-1">
             Real-time decision support, custom heap prioritization, and allocation metrics
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#111C2E] border border-[#1E293B] hover:border-slate-700 text-xs font-medium text-slate-300 hover:text-white transition-all"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-bg-surface border border-[var(--border)] hover:border-[var(--border-strong)] text-xs font-semibold text-text-primary transition-all shadow-sm"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-blue-400' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-accent ${refreshing ? 'animate-spin' : ''}`} />
             <span>Refresh</span>
           </button>
           <Link
             to="/triage"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition-all shadow-md shadow-blue-600/20"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-xs font-semibold text-white transition-all shadow-sm"
           >
-            <HeartPulse className="w-3.5 h-3.5" />
+            <HeartPulse className="w-4 h-4" />
             <span>New Triage Assessment</span>
           </Link>
         </div>
@@ -113,23 +112,23 @@ export const Dashboard: React.FC = () => {
 
       {/* Critical Banner if RED Patients Waiting */}
       {redCount > 0 && (
-        <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/40 flex items-center justify-between gap-4 animate-pulse">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-red-600/20 border border-red-500/40 flex items-center justify-center flex-shrink-0">
-              <AlertTriangle className="w-5 h-5 text-red-400" />
+        <div className="p-4 rounded-2xl bg-[#FEF2F2] dark:bg-[var(--critical-light)] border border-[#FCA5A5] dark:border-[var(--critical)] flex items-center justify-between gap-4 shadow-sm animate-pulse">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-[#FEE2E2] dark:bg-red-950/40 border border-[#F87171] flex items-center justify-center flex-shrink-0">
+              <AlertTriangle className="w-5 h-5 text-[var(--critical)]" />
             </div>
             <div>
-              <p className="text-sm font-bold text-red-200">
+              <p className="text-sm font-bold text-[var(--critical)]">
                 CRITICAL TRIAGE ALERT: {redCount} Patient{redCount > 1 ? 's' : ''} in Category RED
               </p>
-              <p className="text-xs text-red-300/80 mt-0.5">
+              <p className="text-xs text-red-700/80 dark:text-red-300/80 mt-0.5">
                 Immediate life-threatening urgency detected. Immediate ambulance dispatch and ICU bed reservation required.
               </p>
             </div>
           </div>
           <Link
             to="/priority-queue"
-            className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-xs font-semibold text-white whitespace-nowrap transition-colors"
+            className="px-4 py-2 rounded-xl bg-[var(--critical)] hover:opacity-90 text-xs font-semibold text-white whitespace-nowrap transition-all shadow-sm"
           >
             View Queue
           </Link>
@@ -137,82 +136,90 @@ export const Dashboard: React.FC = () => {
       )}
 
       {/* 4 Main KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Active Emergency Requests */}
-        <div className="p-5 rounded-xl bg-[#111C2E] border border-[#1E293B] shadow-sm">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-medium">Active Emergencies</span>
-            <Activity className="w-4 h-4 text-blue-400" />
+        <div className="p-5 rounded-2xl bg-bg-surface border border-[var(--border)] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-text-secondary">Active Emergencies</span>
+            <div className="w-8 h-8 rounded-lg bg-accent-light flex items-center justify-center">
+              <Activity className="w-4 h-4 text-accent" />
+            </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-white tracking-tight">
+            <span className="text-3xl font-extrabold text-text-primary tracking-tight">
               {data?.totalActiveRequests ?? 0}
             </span>
-            <span className="text-xs text-slate-400 font-medium">episodes active</span>
+            <span className="text-xs text-text-secondary font-medium">episodes active</span>
           </div>
-          <div className="mt-3 pt-3 border-t border-[#1E293B] flex items-center justify-between text-[11px] text-slate-400">
+          <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center justify-between text-xs text-text-secondary">
             <span>Pending Triage:</span>
-            <span className="font-semibold text-amber-400">{data?.waitingPatients ?? 0}</span>
+            <span className="font-bold text-[var(--warning)]">{data?.waitingPatients ?? 0}</span>
           </div>
         </div>
 
         {/* Priority Queue (Binary Heap) */}
-        <div className="p-5 rounded-xl bg-[#111C2E] border border-[#1E293B] shadow-sm">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-medium">Heap Priority Queue</span>
-            <Layers className="w-4 h-4 text-purple-400" />
+        <div className="p-5 rounded-2xl bg-bg-surface border border-[var(--border)] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-text-secondary">Heap Priority Queue</span>
+            <div className="w-8 h-8 rounded-lg bg-accent-light flex items-center justify-center">
+              <Layers className="w-4 h-4 text-accent" />
+            </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-white tracking-tight">
+            <span className="text-3xl font-extrabold text-text-primary tracking-tight">
               {queue.length}
             </span>
-            <span className="text-xs text-slate-400 font-medium">in clinical min-heap</span>
+            <span className="text-xs text-text-secondary font-medium">in clinical min-heap</span>
           </div>
-          <div className="mt-3 pt-3 border-t border-[#1E293B] flex items-center justify-between text-[11px] text-slate-400">
+          <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center justify-between text-xs text-text-secondary">
             <span>Top Urgency:</span>
-            <span className="font-semibold text-red-400">
+            <span className="font-bold text-[var(--critical)]">
               {queue.length > 0 ? `${queue[0].triageCategory} (Req #${queue[0].requestId})` : 'Queue Empty'}
             </span>
           </div>
         </div>
 
         {/* Available Ambulances */}
-        <div className="p-5 rounded-xl bg-[#111C2E] border border-[#1E293B] shadow-sm">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-medium">Ambulances Fleet</span>
-            <Truck className="w-4 h-4 text-emerald-400" />
+        <div className="p-5 rounded-2xl bg-bg-surface border border-[var(--border)] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-text-secondary">Ambulances Fleet</span>
+            <div className="w-8 h-8 rounded-lg bg-accent-light flex items-center justify-center">
+              <Truck className="w-4 h-4 text-accent" />
+            </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-emerald-400 tracking-tight">
+            <span className="text-3xl font-extrabold text-accent tracking-tight">
               {data?.availableAmbulances ?? 0}
             </span>
-            <span className="text-xs text-slate-400 font-medium">
+            <span className="text-xs text-text-secondary font-medium">
               available / {(data?.availableAmbulances ?? 0) + (data?.dispatchedAmbulances ?? 0)} total
             </span>
           </div>
-          <div className="mt-3 pt-3 border-t border-[#1E293B] flex items-center justify-between text-[11px] text-slate-400">
+          <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center justify-between text-xs text-text-secondary">
             <span>Dispatched / Active:</span>
-            <span className="font-semibold text-amber-400">{data?.dispatchedAmbulances ?? 0}</span>
+            <span className="font-bold text-[var(--warning)]">{data?.dispatchedAmbulances ?? 0}</span>
           </div>
         </div>
 
         {/* Available Beds */}
-        <div className="p-5 rounded-xl bg-[#111C2E] border border-[#1E293B] shadow-sm">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-xs font-medium">Hospital Beds</span>
-            <Bed className="w-4 h-4 text-indigo-400" />
+        <div className="p-5 rounded-2xl bg-bg-surface border border-[var(--border)] shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-text-secondary">Hospital Beds</span>
+            <div className="w-8 h-8 rounded-lg bg-accent-light flex items-center justify-center">
+              <Bed className="w-4 h-4 text-accent" />
+            </div>
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-white tracking-tight">
+            <span className="text-3xl font-extrabold text-text-primary tracking-tight">
               {data?.availableBeds ?? 0}
             </span>
-            <span className="text-xs text-slate-400 font-medium">
+            <span className="text-xs text-text-secondary font-medium">
               free of {data?.totalBeds ?? 0} beds
             </span>
           </div>
-          <div className="mt-3 pt-3 border-t border-[#1E293B] flex items-center justify-between text-[11px] text-slate-400">
+          <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center justify-between text-xs text-text-secondary">
             <span>Occupancy Rate:</span>
-            <span className="font-semibold text-slate-200">
+            <span className="font-bold text-text-primary">
               {data?.totalBeds ? Math.round(((data.occupiedBeds || 0) / data.totalBeds) * 100) : 0}%
             </span>
           </div>
@@ -222,62 +229,62 @@ export const Dashboard: React.FC = () => {
       {/* Middle Section: Triage Severity Breakdown & Bed Capacity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Triage Urgency Distribution */}
-        <div className="p-5 rounded-xl bg-[#111C2E] border border-[#1E293B] lg:col-span-1">
+        <div className="p-6 rounded-2xl bg-bg-surface border border-[var(--border)] shadow-sm lg:col-span-1">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-white">Triage Severity Distribution</h3>
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider">Clinical Urgency</span>
+            <h3 className="text-sm font-bold text-text-primary">Triage Severity Distribution</h3>
+            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Clinical Urgency</span>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {/* RED */}
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-red-950/20 border border-red-500/20">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-[#FEF2F2] dark:bg-[var(--critical-light)] border border-[#FEE2E2] dark:border-[var(--border)]">
               <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                <span className="text-xs font-semibold text-red-300">RED — Critical (Priority 1)</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[var(--critical)]" />
+                <span className="text-xs font-bold text-[var(--critical)]">RED — Critical (Priority 1)</span>
               </div>
-              <span className="text-sm font-bold text-red-400">{redCount}</span>
+              <span className="text-sm font-extrabold text-[var(--critical)]">{redCount}</span>
             </div>
 
             {/* ORANGE */}
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-amber-950/20 border border-amber-500/20">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-[#FFFBEB] dark:bg-[var(--warning-light)] border border-[#FEF3C7] dark:border-[var(--border)]">
               <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                <span className="text-xs font-semibold text-amber-300">ORANGE — High (Priority 2)</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[var(--warning)]" />
+                <span className="text-xs font-bold text-[var(--warning)]">ORANGE — High (Priority 2)</span>
               </div>
-              <span className="text-sm font-bold text-amber-400">{orangeCount}</span>
+              <span className="text-sm font-extrabold text-[var(--warning)]">{orangeCount}</span>
             </div>
 
             {/* YELLOW */}
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-yellow-950/20 border border-yellow-500/20">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-[#FEFCE8] dark:bg-yellow-950/20 border border-[#FEF9C3] dark:border-[var(--border)]">
               <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
-                <span className="text-xs font-semibold text-yellow-300">YELLOW — Moderate (Priority 3)</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#CA8A04]" />
+                <span className="text-xs font-bold text-[#CA8A04] dark:text-yellow-400">YELLOW — Moderate (Priority 3)</span>
               </div>
-              <span className="text-sm font-bold text-yellow-400">{yellowCount}</span>
+              <span className="text-sm font-extrabold text-[#CA8A04] dark:text-yellow-400">{yellowCount}</span>
             </div>
 
             {/* GREEN */}
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-emerald-950/20 border border-emerald-500/20">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-[#F0FDF4] dark:bg-[var(--success-light)] border border-[#DCFCE7] dark:border-[var(--border)]">
               <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                <span className="text-xs font-semibold text-emerald-300">GREEN — Low (Priority 4)</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[var(--success)]" />
+                <span className="text-xs font-bold text-[var(--success)]">GREEN — Low (Priority 4)</span>
               </div>
-              <span className="text-sm font-bold text-emerald-400">{greenCount}</span>
+              <span className="text-sm font-extrabold text-[var(--success)]">{greenCount}</span>
             </div>
           </div>
         </div>
 
         {/* Live Priority Queue Top Items (Min-Heap Snapshot) */}
-        <div className="p-5 rounded-xl bg-[#111C2E] border border-[#1E293B] lg:col-span-2">
+        <div className="p-6 rounded-2xl bg-bg-surface border border-[var(--border)] shadow-sm lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-white">Live Patient Priority Queue</h3>
-              <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">
+            <div className="flex items-center gap-2.5">
+              <h3 className="text-sm font-bold text-text-primary">Live Patient Priority Queue</h3>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-accent-light text-accent border border-[var(--border)]">
                 Binary Min-Heap
               </span>
             </div>
             <Link
               to="/priority-queue"
-              className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 font-medium"
+              className="text-xs text-accent hover:underline flex items-center gap-1 font-bold"
             >
               <span>Full Queue</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -285,40 +292,40 @@ export const Dashboard: React.FC = () => {
           </div>
 
           {queue.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10 text-slate-500 border border-dashed border-[#1E293B] rounded-lg">
-              <CheckCircle2 className="w-8 h-8 text-emerald-500/60 mb-2" />
-              <p className="text-xs font-medium">All active emergency requests triaged & resolved</p>
-              <p className="text-[11px] text-slate-500 mt-0.5">New requests will order automatically by medical urgency</p>
+            <div className="flex flex-col items-center justify-center py-12 text-text-muted border border-dashed border-[var(--border)] rounded-2xl bg-bg-surface-2/40">
+              <CheckCircle2 className="w-12 h-12 text-[var(--success)] mb-2.5" />
+              <p className="text-sm font-bold text-text-primary">All active emergency requests triaged & resolved</p>
+              <p className="text-xs text-text-secondary mt-1">New requests will order automatically by medical urgency</p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {queue.slice(0, 4).map((item, index) => {
                 const badgeColor =
                   item.triageCategory === 'RED'
-                    ? 'bg-red-500/20 text-red-400 border-red-500/30'
+                    ? 'bg-[#FEF2F2] dark:bg-[var(--critical-light)] text-[var(--critical)] border-[#FCA5A5]'
                     : item.triageCategory === 'ORANGE'
-                    ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                    ? 'bg-[#FFFBEB] dark:bg-[var(--warning-light)] text-[var(--warning)] border-[#FCD34D]'
                     : item.triageCategory === 'YELLOW'
-                    ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-                    : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+                    ? 'bg-[#FEFCE8] text-[#CA8A04] border-[#FDE047]'
+                    : 'bg-[#F0FDF4] dark:bg-[var(--success-light)] text-[var(--success)] border-[#86EFAC]';
 
                 return (
                   <div
                     key={item.requestId}
-                    className="p-3 rounded-lg bg-[#0B1220] border border-[#1E293B] flex items-center justify-between hover:border-slate-700 transition-colors"
+                    className="p-3.5 rounded-xl bg-bg-surface-2 border border-[var(--border)] flex items-center justify-between hover:border-[var(--border-strong)] transition-all shadow-sm"
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-md bg-[#111C2E] flex items-center justify-center text-xs font-bold text-slate-400 border border-[#1E293B]">
+                    <div className="flex items-center gap-3.5">
+                      <span className="w-7 h-7 rounded-lg bg-bg-surface flex items-center justify-center text-xs font-bold text-text-secondary border border-[var(--border)] shadow-sm">
                         #{index + 1}
                       </span>
                       <div>
-                        <p className="text-xs font-semibold text-white flex items-center gap-2">
-                          <span>{item.patientName}</span>
-                          <span className="text-[10px] text-slate-500 font-mono">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-text-primary">{item.patientName}</span>
+                          <span className="text-[10px] text-text-muted font-mono bg-bg-surface px-1.5 py-0.5 rounded border border-[var(--border)]">
                             {item.requestNumber}
                           </span>
-                        </p>
-                        <p className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
+                        </div>
+                        <p className="text-[11px] text-text-secondary mt-0.5 flex items-center gap-2">
                           <span>Status: {item.requestStatus.replace('_', ' ')}</span>
                           <span>•</span>
                           <span>Reg: {new Date(item.registeredAt).toLocaleTimeString()}</span>
@@ -327,12 +334,12 @@ export const Dashboard: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <span className={`px-2 py-0.5 rounded text-[11px] font-bold border ${badgeColor}`}>
+                      <span className={`px-2.5 py-0.5 rounded-lg text-[11px] font-bold border ${badgeColor}`}>
                         {item.triageCategory} (P{item.priorityValue})
                       </span>
                       <Link
                         to="/ambulances"
-                        className="px-2.5 py-1 rounded bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 text-xs font-medium border border-blue-500/30 transition-colors"
+                        className="px-3 py-1.5 rounded-lg bg-accent hover:bg-accent-hover text-white text-xs font-semibold shadow-sm transition-all"
                       >
                         Dispatch
                       </Link>
