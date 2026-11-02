@@ -17,10 +17,24 @@ export const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      setError('Please enter your email address.');
+      return;
+    }
+    if (!password) {
+      setError('Please enter your password.');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const response = await api.post<AuthResponse>('/auth/login', { email, password });
+      const response = await api.post<AuthResponse>('/auth/login', { 
+        email: trimmedEmail, 
+        password 
+      });
       const authData = response.data;
       const user: User = {
         userId: authData.userId,
@@ -33,7 +47,18 @@ export const Login: React.FC = () => {
       login(authData.token, user);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Invalid email or password. Please try again.');
+      if (!err.response) {
+        setError('Unable to reach server. Please ensure the backend service is running on port 8080.');
+      } else if (err.response.status === 401) {
+        setError(err.response.data?.message || 'Invalid email or password. Please try again.');
+      } else if (err.response.status === 403) {
+        setError(err.response.data?.message || 'Access denied. Your account may be deactivated.');
+      } else if (err.response.status === 400 && err.response.data?.fieldErrors) {
+        const firstField = Object.values(err.response.data.fieldErrors)[0];
+        setError(typeof firstField === 'string' ? firstField : 'Please provide valid login details.');
+      } else {
+        setError(err.response.data?.message || 'An unexpected error occurred during authentication.');
+      }
     } finally {
       setIsLoading(false);
     }

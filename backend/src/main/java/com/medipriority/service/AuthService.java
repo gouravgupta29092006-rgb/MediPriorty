@@ -3,6 +3,7 @@ package com.medipriority.service;
 import com.medipriority.dto.request.LoginRequest;
 import com.medipriority.dto.response.AuthResponse;
 import com.medipriority.dto.response.UserResponse;
+import com.medipriority.exception.ResourceNotFoundException;
 import com.medipriority.model.User;
 import com.medipriority.repository.UserRepository;
 import com.medipriority.security.JwtTokenProvider;
@@ -23,13 +24,14 @@ public class AuthService {
     private final UserRepository userRepository;
 
     public AuthResponse login(LoginRequest request) {
+        String cleanEmail = request.email() != null ? request.email().trim() : "";
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+                new UsernamePasswordAuthenticationToken(cleanEmail, request.password())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        User user = userRepository.findByEmail(request.email())
-                .orElseThrow();
+        User user = userRepository.findByEmailIgnoreCase(cleanEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + cleanEmail));
 
         String token = jwtTokenProvider.generateToken(
                 user.getEmail(), user.getRole().name(), user.getUserId());
@@ -41,7 +43,8 @@ public class AuthService {
     public UserResponse getCurrentUser() {
         UserDetails userDetails = (UserDetails)
                 SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
+        User user = userRepository.findByEmailIgnoreCase(userDetails.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userDetails.getUsername()));
         return toResponse(user);
     }
 
