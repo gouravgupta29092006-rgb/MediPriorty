@@ -3,6 +3,29 @@
 All notable changes to this project will be documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.5.0] — 2026-11-02
+
+### Added
+- Complete UI/UX redesign using the reference images for a modern, minimal healthcare SaaS appearance.
+- Comprehensive CSS custom property design token system (`--bg-primary`, `--bg-surface`, `--accent`, `--border`, etc.).
+- Full Light and Dark mode theming with `ThemeContext`, `localStorage` persistence, and Sun/Moon toggle.
+- Redesigned Application Shell:
+  - Sidebar: Brand logo with teal accent, clean uppercase section grouping, active item highlight, and profile card.
+  - Navbar: Hospital branding, pulse online status badge, live monospace clock, and theme switcher.
+- Redesigned all 11 pages matching provided reference dashboards:
+  - `Login.tsx`: Minimal light card layout with quick demo credentials.
+  - `Dashboard.tsx`: Executive command center with 4 KPI cards, triage severity strip, and min-heap queue summary.
+  - `PriorityQueuePage.tsx`: Explainer card for binary min-heap tie-breaking and ordered candidates list.
+  - `EmergencyRequestsPage.tsx`: Filter tabs, status tags, and incident intake modal.
+  - `TriagePage.tsx`: Categorization cards (RED P1, ORANGE P2, YELLOW P3, GREEN P4), vitals grid, and immutable audit history.
+  - `BedsPage.tsx`: Interactive bed card grid, status filters, and automatic reservation trigger.
+  - `PatientsPage.tsx`: Patient directory with search, gender tags, and registration form.
+  - `AllocationsHistoryPage.tsx`: Tabbed timeline for ambulance dispatches and bed allocations.
+  - `AnalyticsPage.tsx`: Donut and bar chart metrics using Recharts.
+  - `AmbulancesPage.tsx`, `UsersPage.tsx`, `AuditLogsPage.tsx`: Consistent design token styling.
+
+---
+
 ## [0.4.0] — 2026-11-01
 
 ### Added
