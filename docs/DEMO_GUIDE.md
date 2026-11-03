@@ -1,0 +1,61 @@
+# MediPriority — Academic Walkthrough & Demo Guide
+
+## 1. System Access & Roles
+
+Access the running application at: **[http://localhost:5173](http://localhost:5173)**
+
+On the Command Center Login page, click any of the **Quick Demo Credentials** buttons to instantly populate authorized roles:
+
+| Role | Email | Password | Primary Workflow |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@medipriority.com` | `Admin@123` | System oversight, user accounts, audit logging |
+| **Dispatcher** | `dispatcher@medipriority.com` | `Dispatch@123` | Emergency intake, ambulance routing, patient registration |
+| **Doctor** | `doctor@medipriority.com` | `Doctor@123` | Clinical triage scoring, hospital bed reservations |
+
+---
+
+## 2. Walkthrough Scenarios for Academic Evaluation
+
+### Scenario A: Emergency Call Intake & Clinical Triage
+1. **Login as Dispatcher** (`dispatcher@medipriority.com` / `Dispatch@123`).
+2. Navigate to **Emergency Requests** in the left sidebar.
+3. Click **"New Emergency Request"**:
+   - Select patient: *Robert Vance* (or create a new patient in **Patients Directory**).
+   - Pickup Location: *Downtown Center Plaza (Node 4)*.
+   - Initial Summary: *Suspected myocardial infarction, severe chest pain*.
+   - Click **Submit Request**. Status is created as `PENDING_TRIAGE`.
+4. **Switch to Medical Officer** (Logout, then login as `doctor@medipriority.com` / `Doctor@123`).
+5. Navigate to **Clinical Triage**:
+   - The pending request appears in the evaluation list.
+   - Select triage urgency level **RED (Critical)**.
+   - Enter vital signs (BP: 85/55, HR: 132, SpO2: 88%) and clinical notes.
+   - Click **Submit Triage Assessment**.
+
+### Scenario B: Priority Queue & Heap Inspection
+1. Navigate to **Priority Queue** in the navigation sidebar.
+2. Observe how the newly triaged RED patient instantly moves to the **top of the queue** ahead of any earlier-arriving GREEN or YELLOW patients.
+3. Note the composite Urgency Score (1000) and waiting time calculation, proving the Binary Min-Heap algorithm operates deterministically rather than on FCFS.
+
+### Scenario C: Intelligent Ambulance Dispatch (Dijkstra Routing)
+1. **Switch to Dispatcher** (`dispatcher@medipriority.com`).
+2. Navigate to **Ambulance Fleet** or the triaged request details in **Emergency Requests**.
+3. Click **"Dispatch Optimal Ambulance"**:
+   - Required Level: `ADVANCED`.
+   - The Dijkstra pathfinding engine evaluates travel times from North EMS Station and South EMS Station to Downtown Plaza.
+   - Selects the optimal vehicle with minimal travel time (e.g. 6.2 minutes).
+   - Ambulance status immediately transitions to `DISPATCHED`.
+
+### Scenario D: Hospital Bed Reservation & Concurrency Safety
+1. **Switch to Medical Officer** (`doctor@medipriority.com`).
+2. Navigate to **Hospital Beds**.
+3. Filter by department **Intensive Care Unit (ICU)**.
+4. Select an available bed and click **"Reserve Bed for Request"**.
+5. Bed status transitions to `OCCUPIED`.
+6. Attempting to reserve the same bed for another patient simultaneously returns an immediate HTTP 409 Conflict error, proving atomic concurrency safety.
+
+### Scenario E: Governance & Immutable Audit Trail
+1. **Login as Administrator** (`admin@medipriority.com`).
+2. Navigate to **Audit Logs**:
+   - Observe timestamped records of every previous step: login event, triage sign-off, ambulance dispatch, and bed reservation.
+3. Navigate to **Emergency Analytics**:
+   - Review operational metrics: average triage-to-dispatch turnaround time, triage distribution charts, and bed occupancy rates.
