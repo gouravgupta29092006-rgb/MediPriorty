@@ -96,7 +96,7 @@ export const PriorityQueuePage: React.FC = () => {
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-accent hover:bg-accent-hover text-white text-xs font-semibold transition-all shadow-sm"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span>Heap Rebuild O(n)</span>
+              <span>Refresh Priority List</span>
             </button>
           )}
         </div>
@@ -119,23 +119,23 @@ export const PriorityQueuePage: React.FC = () => {
       <div className="bg-bg-surface border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm">
         <div className="px-6 py-4 border-b border-[var(--border)] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <h3 className="text-sm font-bold text-text-primary">Ordered Heap Nodes</h3>
+            <h3 className="text-sm font-bold text-text-primary">Emergency Patient Priority List</h3>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-accent-light text-accent border border-[var(--border)]">
-              {queue.length} Active Candidates
+              {queue.length} Pending Emergency Patients
             </span>
           </div>
-          <span className="text-xs text-text-muted">Live extraction order (Root first)</span>
+          <span className="text-xs text-text-muted">Highest Priority First</span>
         </div>
 
         {loading ? (
           <div className="py-20 flex flex-col items-center justify-center text-text-muted">
             <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mb-3" />
-            <p className="text-xs font-semibold">Querying min-heap...</p>
+            <p className="text-xs font-semibold">Loading patient priority list...</p>
           </div>
         ) : queue.length === 0 ? (
           <div className="py-20 flex flex-col items-center justify-center text-text-muted">
             <CheckCircle2 className="w-12 h-12 text-[var(--success)] mb-3" />
-            <p className="text-base font-bold text-text-primary">Heap Queue is Empty</p>
+            <p className="text-base font-bold text-text-primary">No Pending Emergency Allocations</p>
             <p className="text-xs text-text-secondary mt-1">No emergency requests are currently awaiting allocation.</p>
           </div>
         ) : (
@@ -169,7 +169,7 @@ export const PriorityQueuePage: React.FC = () => {
                         </span>
                         {isRoot && (
                           <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-accent text-white shadow-sm">
-                            Heap Root (Next Serve)
+                            Highest Priority (Next)
                           </span>
                         )}
                         <span className="text-[10px] text-text-muted font-mono bg-bg-surface-2 px-1.5 py-0.5 rounded border border-[var(--border)]">

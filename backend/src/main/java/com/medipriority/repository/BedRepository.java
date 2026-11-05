@@ -38,4 +38,6 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
 
     @Query("SELECT b.status, COUNT(b) FROM Bed b GROUP BY b.status")
     List<Object[]> countGroupedByStatus();
+
+    long countByStatusAndBedType(BedStatus status, BedType type);
 }

@@ -59,3 +59,4 @@ On the Command Center Login page, click any of the **Quick Demo Credentials** bu
    - Observe timestamped records of every previous step: login event, triage sign-off, ambulance dispatch, and bed reservation.
 3. Navigate to **Emergency Analytics**:
    - Review operational metrics: average triage-to-dispatch turnaround time, triage distribution charts, and bed occupancy rates.
+

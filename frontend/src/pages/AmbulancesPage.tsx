@@ -82,7 +82,7 @@ export const AmbulancesPage: React.FC = () => {
       });
       setMsg({
         type: 'success',
-        text: `Optimal ambulance [${res.data.ambulanceRegistration}] auto-dispatched via Dijkstra routing & capability MergeSort!`,
+        text: `Optimal ambulance [${res.data.ambulanceRegistration}] auto-dispatched using optimal routing and capability matching!`,
       });
       fetchData();
     } catch (err: any) {
@@ -183,7 +183,7 @@ export const AmbulancesPage: React.FC = () => {
             <span>Ambulance Fleet & Dispatch Center</span>
           </h2>
           <p className="text-xs text-text-secondary mt-1">
-            Dijkstra road-network shortest path estimation & custom MergeSort capability ranking
+            Optimal route planning & ambulance capability matching for fastest patient response
           </p>
         </div>
 
@@ -222,7 +222,7 @@ export const AmbulancesPage: React.FC = () => {
               <Zap className="w-4 h-4 text-accent" />
               <span>Intelligent Allocation Engine</span>
             </h3>
-            <span className="text-xs text-text-muted font-mono">Dijkstra + MergeSort</span>
+            <span className="text-xs text-text-muted font-mono">Routing + Capability Engine</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -292,18 +292,18 @@ export const AmbulancesPage: React.FC = () => {
           <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
             <h3 className="text-xs font-bold text-text-primary flex items-center gap-2">
               <Navigation className="w-4 h-4 text-accent" />
-              <span>Dijkstra Shortest Path Probe</span>
+              <span>Ambulance Route & Travel-Time Estimator</span>
             </h3>
-            <span className="text-[10px] text-text-muted font-mono">Graph API</span>
+            <span className="text-[10px] text-text-muted font-mono">Route Information</span>
           </div>
 
           <p className="text-xs text-text-secondary leading-tight">
-            Queries graph adjacency-list with min-heap shortest path calculation.
+            Estimates the optimal route and travel time between ambulance dispatch locations.
           </p>
 
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div>
-              <label className="block text-[10px] font-bold text-text-secondary mb-1">Source Node</label>
+              <label className="block text-[10px] font-bold text-text-secondary mb-1">Starting Location</label>
               <select
                 value={routeSource}
                 onChange={(e) => setRouteSource(e.target.value)}
@@ -319,7 +319,7 @@ export const AmbulancesPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold text-text-secondary mb-1">Destination Node</label>
+              <label className="block text-[10px] font-bold text-text-secondary mb-1">Destination</label>
               <select
                 value={routeDest}
                 onChange={(e) => setRouteDest(e.target.value)}
@@ -340,7 +340,7 @@ export const AmbulancesPage: React.FC = () => {
             disabled={calcLoading}
             className="w-full py-2 bg-accent-light hover:bg-accent hover:text-white border border-[var(--border)] text-accent rounded-xl text-xs font-bold transition-all shadow-sm"
           >
-            {calcLoading ? 'Computing...' : 'Calculate Route Weight'}
+            {calcLoading ? 'Computing...' : 'Calculate Route'}
           </button>
 
           {travelResult && (

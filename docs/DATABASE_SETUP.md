@@ -69,3 +69,4 @@ Verify that all tables and seed records are active:
 mysql -u medipriority_user -pchangeme -e "USE medipriority_db; SHOW TABLES; SELECT user_id, email, role, active FROM users;"
 ```
 Expected output: 12 tables and 3 active demo accounts.
+

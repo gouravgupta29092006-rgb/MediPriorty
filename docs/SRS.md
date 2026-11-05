@@ -101,3 +101,4 @@ This specification describes the functional requirements, non-functional require
 2. **Database Engine:** MySQL Server 8.0+ or 9.x using `InnoDB` and `utf8mb4` character set.
 3. **Clinical Role Separation:** Non-medical users (e.g. Dispatchers) cannot override or create clinical triage assessments.
 4. **Graph Road Network:** Road nodes and weighted edges simulate urban geography; travel times update dynamically based on dispatch requests.
+

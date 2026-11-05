@@ -62,3 +62,4 @@ Configuration values can be customized via environment variables without alterin
 | `SERVER_PORT` | Backend Tomcat HTTP listen port | `8080` |
 | `CORS_ALLOWED_ORIGIN` | Allowed client origin for CORS headers | `http://localhost:5173` |
 | `VITE_API_BASE_URL` | Frontend API client base URL | `http://localhost:8080/api` |
+

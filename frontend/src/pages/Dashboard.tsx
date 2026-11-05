@@ -160,7 +160,7 @@ export const Dashboard: React.FC = () => {
         {/* Priority Queue (Binary Heap) */}
         <div className="p-5 rounded-2xl bg-bg-surface border border-[var(--border)] shadow-sm">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-text-secondary">Heap Priority Queue</span>
+            <span className="text-xs font-semibold text-text-secondary">Patient Priority Queue</span>
             <div className="w-8 h-8 rounded-lg bg-accent-light flex items-center justify-center">
               <Layers className="w-4 h-4 text-accent" />
             </div>
@@ -169,7 +169,7 @@ export const Dashboard: React.FC = () => {
             <span className="text-3xl font-extrabold text-text-primary tracking-tight">
               {queue.length}
             </span>
-            <span className="text-xs text-text-secondary font-medium">in clinical min-heap</span>
+            <span className="text-xs text-text-secondary font-medium">awaiting allocation</span>
           </div>
           <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center justify-between text-xs text-text-secondary">
             <span>Top Urgency:</span>

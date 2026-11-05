@@ -31,9 +31,6 @@ public class DashboardService {
     public DashboardResponse getDashboard() {
         long activeRequests = requestRepository.countActiveRequests();
 
-        long criticalPatients = triageRecordRepository
-                .countByTriageCategory(TriageRecord.TriageCategory.RED);
-
         long pendingTriage = requestRepository
                 .countByRequestStatus(EmergencyRequest.RequestStatus.PENDING_TRIAGE);
 
@@ -41,28 +38,48 @@ public class DashboardService {
                 .countByCurrentStatus(Ambulance.AmbulanceStatus.AVAILABLE);
         long dispatchedAmb = ambulanceRepository
                 .countByCurrentStatus(Ambulance.AmbulanceStatus.DISPATCHED);
+        long onSceneAmb = ambulanceRepository
+                .countByCurrentStatus(Ambulance.AmbulanceStatus.ON_SCENE);
+        long returningAmb = ambulanceRepository
+                .countByCurrentStatus(Ambulance.AmbulanceStatus.RETURNING);
+        long reservedAmb = ambulanceRepository
+                .countByCurrentStatus(Ambulance.AmbulanceStatus.RESERVED);
 
         long availableBeds = bedRepository.countByStatus(Bed.BedStatus.AVAILABLE);
         long occupiedBeds = bedRepository.countByStatus(Bed.BedStatus.OCCUPIED);
         long totalBeds = bedRepository.count();
 
-        // Triage distribution
+        // Triage distribution — count ONLY the latest assessment version per request
         Map<String, Long> triageDist = new HashMap<>();
         for (TriageRecord.TriageCategory cat : TriageRecord.TriageCategory.values()) {
-            triageDist.put(cat.name(), triageRecordRepository.countByTriageCategory(cat));
+            triageDist.put(cat.name(), 0L);
         }
+        triageRecordRepository.countByTriageCategoryGrouped()
+                .forEach(row -> triageDist.put(
+                        ((TriageRecord.TriageCategory) row[0]).name(),
+                        (Long) row[1]));
 
-        // Bed type availability
+        // criticalPatients from the corrected grouped triage distribution (RED category)
+        long criticalPatients = triageDist.getOrDefault("RED", 0L);
+
+        // Bed type availability (active departments only)
         Map<String, Long> bedTypeAvail = new HashMap<>();
         for (Bed.BedType type : Bed.BedType.values()) {
             long avail = bedRepository.findAvailableByType(Bed.BedStatus.AVAILABLE, type).size();
             bedTypeAvail.put(type.name(), avail);
         }
 
+        // Bed type occupied count per type
+        Map<String, Long> bedTypeOccupied = new HashMap<>();
+        for (Bed.BedType type : Bed.BedType.values()) {
+            long occupied = bedRepository.countByStatusAndBedType(Bed.BedStatus.OCCUPIED, type);
+            bedTypeOccupied.put(type.name(), occupied);
+        }
+
         return new DashboardResponse(
                 activeRequests, criticalPatients, pendingTriage,
-                availableAmb, dispatchedAmb,
+                availableAmb, dispatchedAmb, onSceneAmb, returningAmb, reservedAmb,
                 availableBeds, occupiedBeds, totalBeds,
-                triageDist, bedTypeAvail);
+                triageDist, bedTypeAvail, bedTypeOccupied);
     }
 }

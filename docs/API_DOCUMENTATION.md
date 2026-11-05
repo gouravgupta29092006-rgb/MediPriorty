@@ -255,3 +255,4 @@
 - **Access:** `ADMIN`
 - **Query Parameters:** `page`, `size`, `action` (optional filter)
 - **Response (200 OK):** Page array of immutable audit events with actor, timestamp, action type, and details.
+

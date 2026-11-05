@@ -80,3 +80,4 @@ graph LR
      ```
   3. If affected row count equals $0$, the system detects a race condition and throws `ResourceConflictException` mapped to HTTP 409 Conflict.
   4. The client receives an immediate response allowing alternative bed selection without database corruption or orphan reservations.
+

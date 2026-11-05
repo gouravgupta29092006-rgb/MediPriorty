@@ -8,9 +8,13 @@ public record DashboardResponse(
         long waitingPatients,
         long availableAmbulances,
         long dispatchedAmbulances,
+        long onSceneAmbulances,
+        long returningAmbulances,
+        long reservedAmbulances,
         long availableBeds,
         long occupiedBeds,
         long totalBeds,
         Map<String, Long> triageCategoryDistribution,
-        Map<String, Long> bedTypeAvailability
+        Map<String, Long> bedTypeAvailability,
+        Map<String, Long> bedTypeOccupied
 ) {}

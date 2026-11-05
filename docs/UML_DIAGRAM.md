@@ -165,3 +165,4 @@ stateDiagram-v2
     ADMITTED --> CLOSED : Patient treated / discharged
     CLOSED --> [*]
 ```
+

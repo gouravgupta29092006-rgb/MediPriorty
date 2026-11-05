@@ -75,3 +75,4 @@ gantt
 | **Unauthorized Triage Override** | High | Medium | Role-based `@PreAuthorize("hasAnyRole('MEDICAL_OFFICER', 'ADMIN')")` at the service and method security boundary. |
 | **Authentication Form Masking** | Medium | Medium | Pre-submission trimming, case-insensitive repository lookups, and granular error mapping for inactive accounts and network faults. |
 | **Port Conflicts on Local Machine** | Low | Medium | Vite proxy forwarding `/api` requests to port `8080` with dynamic fallback origin pattern support. |
+

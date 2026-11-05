@@ -64,3 +64,4 @@
 | **TC-13** | Protected route without token | `GET /api/dashboard` (no header) | `401 Unauthorized` | **PASS** |
 | **TC-14** | Role authorization enforcement | Dispatcher accessing `GET /api/users` | `403 Forbidden` | **PASS** |
 | **TC-15** | Role authorized access | Admin accessing `GET /api/users` | `200 OK` with users page list | **PASS** |
+

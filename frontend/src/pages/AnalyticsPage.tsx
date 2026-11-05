@@ -18,15 +18,18 @@ import { useTheme } from '../context/ThemeContext';
 export const AnalyticsPage: React.FC = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { theme } = useTheme();
 
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
+      setError(null);
       const res = await api.get('/dashboard');
       setData(res.data);
     } catch (err) {
       console.error('Failed to load analytics', err);
+      setError('Failed to load analytics data. Please check that the backend server is running.');
     } finally {
       setLoading(false);
     }
@@ -44,15 +47,18 @@ export const AnalyticsPage: React.FC = () => {
   ];
 
   const bedData = [
-    { name: 'ICU Beds', Available: data?.bedTypeAvailability?.ICU || 0, Occupied: 1 },
-    { name: 'Emergency Trauma', Available: data?.bedTypeAvailability?.EMERGENCY || 0, Occupied: 2 },
-    { name: 'General Medicine', Available: data?.bedTypeAvailability?.GENERAL || 0, Occupied: 3 },
+    { name: 'ICU Beds', Available: data?.bedTypeAvailability?.ICU || 0, Occupied: data?.bedTypeOccupied?.ICU || 0 },
+    { name: 'Emergency Trauma', Available: data?.bedTypeAvailability?.EMERGENCY || 0, Occupied: data?.bedTypeOccupied?.EMERGENCY || 0 },
+    { name: 'General Medicine', Available: data?.bedTypeAvailability?.GENERAL || 0, Occupied: data?.bedTypeOccupied?.GENERAL || 0 },
   ];
 
   const fleetData = [
     { name: 'Available', value: data?.availableAmbulances || 0, color: '#168653' },
-    { name: 'Dispatched / Active', value: data?.dispatchedAmbulances || 0, color: '#2563EB' },
-  ];
+    { name: 'Dispatched', value: data?.dispatchedAmbulances || 0, color: '#2563EB' },
+    { name: 'On Scene', value: data?.onSceneAmbulances || 0, color: '#7C3AED' },
+    { name: 'Returning', value: data?.returningAmbulances || 0, color: '#D97706' },
+    { name: 'Reserved', value: data?.reservedAmbulances || 0, color: '#0891B2' },
+  ].filter(d => d.value > 0);
 
   const tooltipStyle = {
     backgroundColor: theme === 'dark' ? '#1A292E' : '#FFFFFF',
@@ -90,6 +96,19 @@ export const AnalyticsPage: React.FC = () => {
         <div className="py-20 flex flex-col items-center justify-center text-text-muted">
           <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin mb-3" />
           <span className="text-xs font-semibold">Generating analytics models...</span>
+        </div>
+      ) : error ? (
+        <div className="py-20 flex flex-col items-center justify-center text-text-muted">
+          <BarChart3 className="w-12 h-12 text-[var(--critical)] mb-3 opacity-50" />
+          <p className="text-sm font-bold text-text-primary">Analytics Unavailable</p>
+          <p className="text-xs text-text-secondary mt-1 max-w-sm text-center">{error}</p>
+          <button
+            onClick={fetchAnalytics}
+            className="mt-4 flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent text-white text-xs font-semibold shadow-sm"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span>Retry</span>
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

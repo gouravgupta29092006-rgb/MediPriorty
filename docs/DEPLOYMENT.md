@@ -74,3 +74,4 @@ server {
 - [ ] **Hibernate Validation:** Ensure `spring.jpa.hibernate.ddl-auto` is set to `validate` (never `update` or `create`).
 - [ ] **CORS Origins:** Restrict `CORS_ALLOWED_ORIGIN` strictly to the production domain.
 - [ ] **Error Traces:** Ensure `server.error.include-stacktrace: never` is active to prevent exposure of internal framework internals.
+
