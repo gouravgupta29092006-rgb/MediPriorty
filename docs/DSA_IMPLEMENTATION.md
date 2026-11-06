@@ -52,6 +52,13 @@ Each `QueueEntry` carries a `version` counter. When a patient is reassessed:
 
 This avoids the complexity of heap-decrease-key and is safe for the expected queue sizes.
 
+### Service Layer Lifecycle Synchronization
+In `PriorityQueueService`:
+1. Database remains the single source of truth.
+2. Only requests where `isQueueEligible()` is `true` (`TRIAGED`, `AMBULANCE_DISPATCHED`, `ARRIVED`, `BED_RESERVED`) and having at least one active triage assessment are admitted to the heap.
+3. Requests transitioning to `CLOSED`, `ADMITTED`, or `CANCELLED` are invalidated via `handleRequestLifecycleChange()` and excluded from heap rebuilds.
+4. `getOrderedQueue()` and `peekHighestPriority()` synchronize with MySQL on every call, ensuring zero stale or discharged patients appear in the queue.
+
 ### Data Model
 ```java
 class QueueEntry {

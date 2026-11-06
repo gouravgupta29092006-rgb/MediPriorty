@@ -36,17 +36,22 @@ public class PriorityQueueService {
 
     private final PatientPriorityQueue queue = new PatientPriorityQueue(64);
 
+    public static final List<EmergencyRequest.RequestStatus> ELIGIBLE_STATUSES = List.of(
+            EmergencyRequest.RequestStatus.TRIAGED,
+            EmergencyRequest.RequestStatus.AMBULANCE_DISPATCHED,
+            EmergencyRequest.RequestStatus.ARRIVED,
+            EmergencyRequest.RequestStatus.BED_RESERVED
+    );
+
     /**
-     * Rebuild the priority queue from the database on application startup.
-     * Only includes active, triaged requests.
+     * Rebuild the priority queue from the database on application startup
+     * or whenever the queue requires synchronization with MySQL.
+     * Only includes active, eligible triaged requests awaiting allocation.
      */
     @PostConstruct
     public synchronized void rebuildFromDatabase() {
         log.info("Rebuilding patient priority queue from database...");
-        List<EmergencyRequest> activeRequests = requestRepository.findByRequestStatusIn(
-                List.of(EmergencyRequest.RequestStatus.TRIAGED,
-                        EmergencyRequest.RequestStatus.AMBULANCE_DISPATCHED,
-                        EmergencyRequest.RequestStatus.BED_RESERVED));
+        List<EmergencyRequest> activeRequests = requestRepository.findQueueEligibleRequests(ELIGIBLE_STATUSES);
 
         List<QueueEntry> entries = activeRequests.stream()
                 .map(er -> {
@@ -63,7 +68,7 @@ public class PriorityQueueService {
                 .toList();
 
         queue.rebuild(entries);
-        log.info("Priority queue rebuilt with {} active requests", entries.size());
+        log.info("Priority queue rebuilt with {} active eligible requests", entries.size());
     }
 
     /**
@@ -75,31 +80,47 @@ public class PriorityQueueService {
     }
 
     /**
-     * Invalidate a request (removed from dispatch consideration).
+     * Invalidate a request (removed from allocation consideration).
      */
     public synchronized void invalidate(long requestId) {
         queue.invalidate(requestId);
     }
 
     /**
+     * Synchronizes and invalidates entries when lifecycle states change
+     * (e.g. patient discharge, admission, closure, or cancellation).
+     */
+    public synchronized void handleRequestLifecycleChange(long requestId) {
+        queue.invalidate(requestId);
+        rebuildFromDatabase();
+    }
+
+    /**
      * Get the ordered priority queue for display.
-     * Returns all valid entries in priority order.
+     * Synchronizes with MySQL and extracts all valid entries in priority order via Binary Min-Heap.
      */
     public synchronized List<QueueEntryResponse> getOrderedQueue() {
+        rebuildFromDatabase();
         List<QueueEntry> entries = queue.getAllValidEntries();
         return entries.stream()
                 .map(e -> {
                     EmergencyRequest er = requestRepository.findById(e.getRequestId()).orElse(null);
-                    if (er == null) return null;
+                    if (er == null || !er.isQueueEligible()) {
+                        queue.invalidate(e.getRequestId());
+                        return null;
+                    }
                     TriageRecord latest = triageRecordRepository
                             .findLatestByRequestId(e.getRequestId()).orElse(null);
-                    String category = latest != null ? latest.getTriageCategory().name() : "UNKNOWN";
-                    int pv = latest != null ? latest.getTriageCategory().getPriorityValue() : 4;
+                    if (latest == null) {
+                        queue.invalidate(e.getRequestId());
+                        return null;
+                    }
+                    int pv = latest.getTriageCategory().getPriorityValue();
                     return new QueueEntryResponse(
                             e.getRequestId(),
                             er.getRequestNumber(),
                             er.getPatient().getFullName(),
-                            latest != null ? latest.getTriageCategory() : null,
+                            latest.getTriageCategory(),
                             pv,
                             er.getRequestStatus().name(),
                             er.getCreatedAt(),
@@ -114,6 +135,7 @@ public class PriorityQueueService {
      * Get the highest priority entry without removing it.
      */
     public synchronized QueueEntry peekHighestPriority() {
+        rebuildFromDatabase();
         return queue.peek();
     }
 }

@@ -26,6 +26,15 @@ Where:
   - **Extraction (`extractMin`):** Replaces root with node at $N$, decreases heap size, and bubbles down (`siftDown`) in $O(\log N)$ comparisons.
   - **Heap Peek (`peek`):** Returns the most critical waiting emergency in $O(1)$ time.
 
+### 1.3 Emergency Lifecycle Eligibility & Eviction Predicate
+
+To prevent discharged, admitted, or closed patients from lingering in the active allocation queue, eligibility is governed by a deterministic lifecycle predicate:
+
+$$\text{Eligible}(r) \iff \text{status}(r) \in \{\text{TRIAGED}, \text{AMBULANCE\_DISPATCHED}, \text{ARRIVED}, \text{BED\_RESERVED}\} \land |\text{TriageRecords}(r)| \ge 1$$
+
+- **Ineligible Terminals:** States $\text{CLOSED}$, $\text{ADMITTED}$, and $\text{CANCELLED}$ immediately invalidate the candidate node.
+- **Database Synchronization:** On every `getOrderedQueue()` and `peekHighestPriority()` invocation, `PriorityQueueService` synchronizes with MySQL via `findQueueEligibleRequests()`. Stale nodes are purged lazily through the version registry or during scheduled heap rebuilds triggered by service lifecycle events.
+
 ---
 
 ## 2. Ambulance Pathfinding via Dijkstra's Algorithm

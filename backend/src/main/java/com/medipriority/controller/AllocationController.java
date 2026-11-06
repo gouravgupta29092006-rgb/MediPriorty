@@ -27,10 +27,10 @@ public class AllocationController {
     private final AmbulanceAllocationService ambulanceAllocationService;
     private final BedAllocationService bedAllocationService;
 
-    // --- Ambulance Allocations ---
+    // --- Ambulance Allocations (DISPATCHER role only) ---
 
     @PostMapping("/ambulance/auto")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER')")
+    @PreAuthorize("hasRole('DISPATCHER')")
     public ResponseEntity<AmbulanceAllocationResponse> autoDispatch(
             @Valid @RequestBody AutoDispatchAmbulanceRequest req) {
         return ResponseEntity.ok(ambulanceAllocationService.autoDispatch(
@@ -38,7 +38,7 @@ public class AllocationController {
     }
 
     @PostMapping("/ambulance/manual")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER')")
+    @PreAuthorize("hasRole('DISPATCHER')")
     public ResponseEntity<AmbulanceAllocationResponse> manualDispatch(
             @Valid @RequestBody ManualDispatchAmbulanceRequest req) {
         return ResponseEntity.ok(ambulanceAllocationService.manualDispatch(
@@ -46,13 +46,13 @@ public class AllocationController {
     }
 
     @PatchMapping("/ambulance/{id}/arrived")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER')")
+    @PreAuthorize("hasRole('DISPATCHER')")
     public ResponseEntity<AmbulanceAllocationResponse> markAmbulanceArrived(@PathVariable Long id) {
         return ResponseEntity.ok(ambulanceAllocationService.markArrived(id, SecurityUtil.getCurrentUserId()));
     }
 
     @PatchMapping("/ambulance/{id}/complete")
-    @PreAuthorize("hasAnyRole('ADMIN', 'DISPATCHER')")
+    @PreAuthorize("hasRole('DISPATCHER')")
     public ResponseEntity<AmbulanceAllocationResponse> completeAmbulanceAllocation(@PathVariable Long id) {
         return ResponseEntity.ok(ambulanceAllocationService.complete(id, SecurityUtil.getCurrentUserId()));
     }

@@ -73,6 +73,18 @@ public class EmergencyRequest {
         updatedAt = LocalDateTime.now();
     }
 
+    /**
+     * Checks if this request is eligible to be ranked in the patient priority queue.
+     * Only active requests awaiting resource allocation or transit/admission are eligible.
+     * Closed, discharged, admitted, cancelled, and untriaged requests are strictly excluded.
+     */
+    public boolean isQueueEligible() {
+        return requestStatus == RequestStatus.TRIAGED
+                || requestStatus == RequestStatus.AMBULANCE_DISPATCHED
+                || requestStatus == RequestStatus.ARRIVED
+                || requestStatus == RequestStatus.BED_RESERVED;
+    }
+
     public enum RequestStatus {
         PENDING_TRIAGE,
         TRIAGED,

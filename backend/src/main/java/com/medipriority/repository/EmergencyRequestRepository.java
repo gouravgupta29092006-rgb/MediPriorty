@@ -30,4 +30,9 @@ public interface EmergencyRequestRepository extends JpaRepository<EmergencyReque
     @Query("SELECT COUNT(er) FROM EmergencyRequest er WHERE er.requestStatus NOT IN " +
            "('CLOSED', 'CANCELLED')")
     long countActiveRequests();
+
+    @Query("SELECT er FROM EmergencyRequest er WHERE er.requestStatus IN :statuses " +
+           "AND EXISTS (SELECT 1 FROM TriageRecord t WHERE t.emergencyRequest.requestId = er.requestId) " +
+           "ORDER BY er.createdAt ASC")
+    List<EmergencyRequest> findQueueEligibleRequests(@Param("statuses") List<RequestStatus> statuses);
 }

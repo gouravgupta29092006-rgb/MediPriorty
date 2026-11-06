@@ -1,6 +1,6 @@
 # MediPriority — Verified Test Cases & Results Matrix
 
-## 1. Backend Automated Test Suite (31 Tests — 100% Passing)
+## 1. Backend Automated Test Suite (43 Tests — 100% Passing)
 
 ### 1.1 Custom DSA Tests (`com.medipriority.dsa`)
 
@@ -42,6 +42,28 @@
 | `BedAllocationServiceTest` | `testConcurrentBedConflictThrows409` | Selected bed updated concurrently by another thread | Catches conflict, throws `ResourceConflictException` | **PASS** |
 | `BedAllocationServiceTest` | `testNoBedsAvailable` | Department fully occupied | Throws `AllocationFailedException` | **PASS** |
 | `TriageServiceTest` | `testProcessTriageSuccess` | Medical officer signs off triage category RED | Saves triage record, updates request, enqueues patient | **PASS** |
+
+### 1.3 Priority Queue Lifecycle Tests (`com.medipriority.service.PriorityQueueLifecycleTest`)
+
+| Test Class | Test Name | Input / Condition | Expected Behavior | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| `PriorityQueueLifecycleTest` | `testEmptyQueueReturnsEmptyList` | No active requests in DB | Returns empty list | **PASS** |
+| `PriorityQueueLifecycleTest` | `testClosedAndDischargedRequestsExcludedFromQueue` | Database contains CLOSED request | Queue excludes CLOSED request; size matches eligible count | **PASS** |
+| `PriorityQueueLifecycleTest` | `testAdmittedAndCancelledRequestsExcluded` | Database contains ADMITTED and CANCELLED requests | Both excluded from min-heap candidates | **PASS** |
+| `PriorityQueueLifecycleTest` | `testClinicalUrgencyOrdering` | Requests with RED, ORANGE, and YELLOW triage | Queue orders RED (P1) > ORANGE (P2) > YELLOW (P3) | **PASS** |
+| `PriorityQueueLifecycleTest` | `testTieBreakingRegistrationTimestamp` | Multiple RED requests arriving at different times | Earlier registered timestamp ordered first; ID tie-breaks | **PASS** |
+| `PriorityQueueLifecycleTest` | `testLifecycleChangeEvictsDischargedPatient` | Request transitions to CLOSED | `handleRequestLifecycleChange()` evicts patient immediately | **PASS** |
+
+### 1.4 Ambulance Dispatch Authorization Tests (`com.medipriority.security.AmbulanceDispatchAuthorizationTest`)
+
+| Test Class | Test Name | Input / Condition | Expected Behavior | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| `AmbulanceDispatchAuthorizationTest` | `testDispatcherCanAutoDispatch` | User with role `DISPATCHER` calls `/api/allocations/ambulance/auto` | HTTP `200 OK` | **PASS** |
+| `AmbulanceDispatchAuthorizationTest` | `testAdminForbiddenFromAutoDispatch` | User with role `ADMIN` calls `/api/allocations/ambulance/auto` | HTTP `403 Forbidden` | **PASS** |
+| `AmbulanceDispatchAuthorizationTest` | `testMedicalOfficerForbiddenFromAutoDispatch` | User with role `MEDICAL_OFFICER` calls auto-dispatch | HTTP `403 Forbidden` | **PASS** |
+| `AmbulanceDispatchAuthorizationTest` | `testUnauthenticatedDispatchReturnsUnauthorized` | Unauthenticated user calls auto-dispatch | HTTP `401 Unauthorized` | **PASS** |
+| `AmbulanceDispatchAuthorizationTest` | `testAdminForbiddenFromCompletingAmbulance` | User with role `ADMIN` calls `/complete` | HTTP `403 Forbidden` | **PASS** |
+| `AmbulanceDispatchAuthorizationTest` | `testDispatcherCanCompleteAmbulance` | User with role `DISPATCHER` calls `/complete` | HTTP `200 OK` | **PASS** |
 
 ---
 

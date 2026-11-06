@@ -219,17 +219,16 @@
 
 ## 6. Resource Allocations (Ambulance & Bed)
 
-### 6.1 Dispatch Optimal Ambulance
-- **Endpoint:** `POST /api/allocations/ambulance`
-- **Access:** `DISPATCHER`, `ADMIN`
+### 6.1 Auto-Dispatch Optimal Ambulance
+- **Endpoint:** `POST /api/allocations/ambulance/auto`
+- **Access:** `DISPATCHER` (Strictly enforced; returns 403 for ADMIN / MEDICAL_OFFICER)
 - **Request Body:**
   ```json
   {
-    "requestId": 14,
-    "requiredEquipmentLevel": "ADVANCED"
+    "requestId": 14
   }
   ```
-- **Description:** Invokes Dijkstra algorithm to compute the shortest road path from available stations to pickup node.
+- **Description:** Invokes Dijkstra algorithm to compute the shortest road path from available stations to pickup node and auto-allocates the optimal unit.
 - **Response (200 OK):**
   ```json
   {
@@ -245,9 +244,28 @@
   }
   ```
 
-### 6.2 Reserve Hospital Bed
-- **Endpoint:** `POST /api/allocations/bed`
-- **Access:** `MEDICAL_OFFICER`, `DISPATCHER`, `ADMIN`
+### 6.2 Manual Ambulance Dispatch
+- **Endpoint:** `POST /api/allocations/ambulance/manual`
+- **Access:** `DISPATCHER` (Strictly enforced)
+- **Request Body:**
+  ```json
+  {
+    "requestId": 14,
+    "ambulanceId": 2
+  }
+  ```
+- **Response:** `200 OK` with `AmbulanceAllocationResponse`.
+
+### 6.3 Update Ambulance Run Status (Arrived / Complete)
+- **Endpoints:**
+  - `PATCH /api/allocations/ambulance/{id}/arrived`
+  - `PATCH /api/allocations/ambulance/{id}/complete`
+- **Access:** `DISPATCHER` (Strictly enforced)
+- **Description:** Updates ambulance lifecycle state and triggers immediate priority queue refresh.
+
+### 6.4 Reserve Hospital Bed
+- **Endpoint:** `POST /api/allocations/bed/auto` / `POST /api/allocations/bed/manual`
+- **Access:** `MEDICAL_OFFICER`, `ADMIN`
 - **Request Body:**
   ```json
   {
@@ -276,6 +294,13 @@
     "timestamp": "2026-11-02T12:15:01"
   }
   ```
+
+### 6.5 Bed Lifecycle Transitions (Admit & Discharge)
+- **Endpoints:**
+  - `PATCH /api/allocations/bed/{id}/admit`
+  - `PATCH /api/allocations/bed/{id}/release`
+- **Access:** `MEDICAL_OFFICER`, `ADMIN`
+- **Description:** Updates bed status and marks emergency request as `ADMITTED` or `CLOSED`, evicting the patient from the live priority heap.
 
 ---
 

@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -67,6 +68,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\":\"Unauthorized\",\"message\":\"Authentication required\"}");
+                        })
+                )
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
                         .requestMatchers("/api/auth/**").permitAll()
@@ -80,8 +88,18 @@ public class SecurityConfig {
                         // Medical officer
                         .requestMatchers("/api/triage/**")
                                 .hasAnyRole("MEDICAL_OFFICER", "ADMIN")
-                        // Dispatcher + Admin
-                        .requestMatchers("/api/allocations/**")
+                        // Ambulance dispatch: DISPATCHER ONLY
+                        .requestMatchers(HttpMethod.POST, "/api/allocations/ambulance/**")
+                                .hasRole("DISPATCHER")
+                        .requestMatchers(HttpMethod.PATCH, "/api/allocations/ambulance/**")
+                                .hasRole("DISPATCHER")
+                        // Bed allocations: MEDICAL_OFFICER and ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/allocations/bed/auto", "/api/allocations/bed/manual")
+                                .hasAnyRole("MEDICAL_OFFICER", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/allocations/bed/*/admit", "/api/allocations/bed/*/release")
+                                .hasAnyRole("MEDICAL_OFFICER", "ADMIN")
+                        // View allocations history (read-only)
+                        .requestMatchers(HttpMethod.GET, "/api/allocations/**")
                                 .hasAnyRole("DISPATCHER", "MEDICAL_OFFICER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/patients")
                                 .hasAnyRole("DISPATCHER", "ADMIN")

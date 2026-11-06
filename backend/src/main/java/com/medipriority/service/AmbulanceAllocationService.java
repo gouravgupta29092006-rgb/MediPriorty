@@ -151,6 +151,7 @@ public class AmbulanceAllocationService {
         // Update request status
         er.setRequestStatus(EmergencyRequest.RequestStatus.AMBULANCE_DISPATCHED);
         requestRepository.save(er);
+        priorityQueueService.rebuildFromDatabase();
 
         // Create allocation record
         AmbulanceAllocation allocation = AmbulanceAllocation.builder()
@@ -181,6 +182,7 @@ public class AmbulanceAllocationService {
         allocation.getEmergencyRequest().setRequestStatus(EmergencyRequest.RequestStatus.ARRIVED);
         requestRepository.save(allocation.getEmergencyRequest());
         ambulanceRepository.save(allocation.getAmbulance());
+        priorityQueueService.rebuildFromDatabase();
         return toResponse(allocationRepository.save(allocation));
     }
 

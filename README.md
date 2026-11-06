@@ -240,7 +240,7 @@ MediPriority/
 │   │   └── resources/
 │   │       ├── db/migration/    # Flyway versioned SQL scripts (V1 to V12)
 │   │       └── application.yml  # Application properties
-│   ├── src/test/java/           # JUnit 5 & Mockito test suite (31 tests)
+│   ├── src/test/java/           # JUnit 5 & Mockito test suite (43 tests)
 │   ├── mvnw                     # Unix Maven Wrapper
 │   ├── mvnw.cmd                 # Windows Maven Wrapper
 │   └── pom.xml                  # Maven project descriptor
@@ -283,7 +283,7 @@ All technical documents are maintained under [`docs/`](docs/):
 - [`ALLOCATION_ALGORITHMS.md`](docs/ALLOCATION_ALGORITHMS.md) — Urgency score functions, Dijkstra routing, and bed matching.
 - [`SECURITY.md`](docs/SECURITY.md) — Authentication, BCrypt hashing, JWT lifecycle, and defense strategies.
 - [`TESTING_STRATEGY.md`](docs/TESTING_STRATEGY.md) — Quality assurance layers and test execution methodologies.
-- [`TEST_CASES.md`](docs/TEST_CASES.md) — Catalog of 31 backend and 15 security regression test cases.
+- [`TEST_CASES.md`](docs/TEST_CASES.md) — Catalog of 43 backend and 15 security regression test cases.
 - [`ENVIRONMENT_SETUP.md`](docs/ENVIRONMENT_SETUP.md) — Windows and Linux prerequisite installation.
 - [`DEPLOYMENT.md`](docs/DEPLOYMENT.md) — Production packaging, Nginx reverse proxy, and security checklist.
 - [`DEMO_GUIDE.md`](docs/DEMO_GUIDE.md) — Step-by-step evaluator walkthrough script.

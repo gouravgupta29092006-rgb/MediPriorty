@@ -41,6 +41,7 @@ public class BedAllocationService {
     private final TriageRecordRepository triageRecordRepository;
     private final UserRepository userRepository;
     private final AuditService auditService;
+    private final PriorityQueueService priorityQueueService;
 
     /**
      * Auto-assigns the first available bed of the required type.
@@ -120,6 +121,8 @@ public class BedAllocationService {
                 saved.getAllocationId(),
                 "{\"requestId\":" + requestId + ",\"bedId\":" + bedId + "}");
 
+        priorityQueueService.rebuildFromDatabase();
+
         return toResponse(saved);
     }
 
@@ -135,6 +138,9 @@ public class BedAllocationService {
         bedRepository.save(allocation.getBed());
         requestRepository.save(allocation.getEmergencyRequest());
         auditService.log(actingUserId, "PATIENT_ADMITTED", "BedAllocation", allocationId, null);
+
+        priorityQueueService.handleRequestLifecycleChange(allocation.getEmergencyRequest().getRequestId());
+
         return toResponse(bedAllocationRepository.save(allocation));
     }
 
@@ -152,6 +158,9 @@ public class BedAllocationService {
         bedRepository.save(allocation.getBed());
         requestRepository.save(allocation.getEmergencyRequest());
         auditService.log(actingUserId, "BED_RELEASED", "BedAllocation", allocationId, null);
+
+        priorityQueueService.handleRequestLifecycleChange(allocation.getEmergencyRequest().getRequestId());
+
         return toResponse(bedAllocationRepository.save(allocation));
     }
 

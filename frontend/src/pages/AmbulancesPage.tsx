@@ -7,12 +7,16 @@ import {
   CheckCircle2,
   AlertTriangle,
   RefreshCw,
-  Navigation
+  Navigation,
+  ShieldAlert
 } from 'lucide-react';
 import api from '../api/client';
 import { Ambulance, EmergencyRequest, AmbulanceAllocation } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 export const AmbulancesPage: React.FC = () => {
+  const { user, hasRole } = useAuth();
+  const isDispatcher = hasRole(['DISPATCHER']);
   const [ambulances, setAmbulances] = useState<Ambulance[]>([]);
   const [activeRequests, setActiveRequests] = useState<EmergencyRequest[]>([]);
   const [activeAllocations, setActiveAllocations] = useState<AmbulanceAllocation[]>([]);
@@ -265,24 +269,36 @@ export const AmbulancesPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="pt-2 flex items-center gap-3">
-            <button
-              onClick={handleAutoDispatch}
-              disabled={dispatching || !selectedRequestId}
-              className="flex-1 py-2.5 px-4 bg-accent hover:bg-accent-hover text-white rounded-xl text-xs font-bold shadow-sm disabled:opacity-50 flex items-center justify-center gap-2 transition-all"
-            >
-              <Zap className="w-4 h-4" />
-              <span>Auto-Dispatch Best Ambulance (Recommended)</span>
-            </button>
+          <div className="pt-2">
+            {isDispatcher ? (
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleAutoDispatch}
+                  disabled={dispatching || !selectedRequestId}
+                  className="flex-1 py-2.5 px-4 bg-accent hover:bg-accent-hover text-white rounded-xl text-xs font-bold shadow-sm disabled:opacity-50 flex items-center justify-center gap-2 transition-all"
+                >
+                  <Zap className="w-4 h-4" />
+                  <span>Auto-Dispatch Best Ambulance (Recommended)</span>
+                </button>
 
-            {selectedAmbulanceId && (
-              <button
-                onClick={handleManualDispatch}
-                disabled={dispatching}
-                className="py-2.5 px-4 bg-bg-surface-2 hover:bg-bg-surface border border-[var(--border)] hover:border-[var(--border-strong)] text-text-primary rounded-xl text-xs font-bold disabled:opacity-50 transition-all shadow-sm"
-              >
-                Manual Override
-              </button>
+                {selectedAmbulanceId && (
+                  <button
+                    onClick={handleManualDispatch}
+                    disabled={dispatching}
+                    className="py-2.5 px-4 bg-bg-surface-2 hover:bg-bg-surface border border-[var(--border)] hover:border-[var(--border-strong)] text-text-primary rounded-xl text-xs font-bold disabled:opacity-50 transition-all shadow-sm"
+                  >
+                    Manual Override
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="p-3.5 rounded-xl bg-accent-light/40 border border-[var(--border)] text-xs text-text-secondary flex items-start gap-2.5">
+                <ShieldAlert className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold text-text-primary">Dispatch Restricted to Dispatchers: </span>
+                  Ambulance dispatch operations are restricted to certified DISPATCHER personnel. Current view is in administrative read-only monitoring mode.
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -449,20 +465,26 @@ export const AmbulancesPage: React.FC = () => {
                         </span>
                       </td>
                       <td className="py-4 px-5 text-right space-x-2">
-                        {!alloc.arrivalTime && (
-                          <button
-                            onClick={() => handleMarkArrived(alloc.allocationId)}
-                            className="px-3 py-1 bg-[#EDE9FE] border border-[#DDD6FE] text-[#7C3AED] rounded-lg text-xs font-bold hover:opacity-80 transition-all shadow-sm"
-                          >
-                            Mark Arrived
-                          </button>
+                        {isDispatcher ? (
+                          <>
+                            {!alloc.arrivalTime && (
+                              <button
+                                onClick={() => handleMarkArrived(alloc.allocationId)}
+                                className="px-3 py-1 bg-[#EDE9FE] border border-[#DDD6FE] text-[#7C3AED] rounded-lg text-xs font-bold hover:opacity-80 transition-all shadow-sm"
+                              >
+                                Mark Arrived
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleComplete(alloc.allocationId)}
+                              className="px-3 py-1 bg-[#DCFCE7] dark:bg-[var(--success-light)] border border-[#86EFAC] text-[var(--success)] rounded-lg text-xs font-bold hover:opacity-80 transition-all shadow-sm"
+                            >
+                              Complete Run
+                            </button>
+                          </>
+                        ) : (
+                          <span className="text-[11px] text-text-muted italic">Read-only (Active)</span>
                         )}
-                        <button
-                          onClick={() => handleComplete(alloc.allocationId)}
-                          className="px-3 py-1 bg-[#DCFCE7] dark:bg-[var(--success-light)] border border-[#86EFAC] text-[var(--success)] rounded-lg text-xs font-bold hover:opacity-80 transition-all shadow-sm"
-                        >
-                          Complete Run
-                        </button>
                       </td>
                     </tr>
                   ))

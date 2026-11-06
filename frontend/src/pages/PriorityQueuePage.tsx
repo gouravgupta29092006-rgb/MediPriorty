@@ -33,7 +33,7 @@ export const PriorityQueuePage: React.FC = () => {
 
   useEffect(() => {
     fetchQueue();
-    const interval = setInterval(fetchQueue, 8000);
+    const interval = setInterval(fetchQueue, 4000);
     return () => clearInterval(interval);
   }, []);
 
@@ -135,7 +135,7 @@ export const PriorityQueuePage: React.FC = () => {
         ) : queue.length === 0 ? (
           <div className="py-20 flex flex-col items-center justify-center text-text-muted">
             <CheckCircle2 className="w-12 h-12 text-[var(--success)] mb-3" />
-            <p className="text-base font-bold text-text-primary">No Pending Emergency Allocations</p>
+            <p className="text-base font-bold text-text-primary">No Pending Emergency Patients</p>
             <p className="text-xs text-text-secondary mt-1">No emergency requests are currently awaiting allocation.</p>
           </div>
         ) : (
@@ -199,21 +199,25 @@ export const PriorityQueuePage: React.FC = () => {
                     </span>
 
                     <div className="flex items-center gap-2">
-                      <Link
-                        to="/ambulances"
-                        className="px-3.5 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"
-                      >
-                        <Truck className="w-3.5 h-3.5" />
-                        <span>Dispatch Ambulance</span>
-                      </Link>
+                      {hasRole(['DISPATCHER']) && (
+                        <Link
+                          to={`/ambulances?dispatchRequestId=${entry.requestId}`}
+                          className="px-3.5 py-1.5 rounded-xl bg-accent hover:bg-accent-hover text-white text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"
+                        >
+                          <Truck className="w-3.5 h-3.5" />
+                          <span>Dispatch Ambulance</span>
+                        </Link>
+                      )}
 
-                      <Link
-                        to="/beds"
-                        className="px-3.5 py-1.5 rounded-xl bg-bg-surface border border-[var(--border)] hover:border-[var(--border-strong)] text-text-primary text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"
-                      >
-                        <Bed className="w-3.5 h-3.5 text-accent" />
-                        <span>Assign Bed</span>
-                      </Link>
+                      {hasRole(['MEDICAL_OFFICER', 'ADMIN']) && (
+                        <Link
+                          to="/beds"
+                          className="px-3.5 py-1.5 rounded-xl bg-bg-surface border border-[var(--border)] hover:border-[var(--border-strong)] text-text-primary text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"
+                        >
+                          <Bed className="w-3.5 h-3.5 text-accent" />
+                          <span>Assign Bed</span>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </div>

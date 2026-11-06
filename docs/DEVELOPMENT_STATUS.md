@@ -6,7 +6,7 @@ Last Updated: 2026-11-06
 
 ## Current Phase
 
-PHASE 15 — Operational Data Integrity, Clinical Terminology Modernization & Chart Repairs (COMPLETE)
+PHASE 16 — Priority Queue Integrity, Discharge Eviction & Dispatcher-Only Authorization (COMPLETE)
 
 ---
 
@@ -29,6 +29,7 @@ PHASE 15 — Operational Data Integrity, Clinical Terminology Modernization & Ch
 | Phase 13 | Testing (31 unit tests passing across DSA and services) | COMPLETE |
 | Phase 14 | Finalization & Verification (Backend build clean, Frontend build clean) | COMPLETE |
 | Phase 15 | Active metrics scoping, clinical terminology modernization, Recharts repair & GitHub synchronization | COMPLETE |
+| Phase 16 | Priority queue lifecycle eviction, dispatcher-only ambulance authorization & live sync | COMPLETE |
 
 ---
 
@@ -40,7 +41,7 @@ PHASE 15 — Operational Data Integrity, Clinical Terminology Modernization & Ch
 | Frontend Dev Server | RUNNING (Port 5173) | Vite 5.4, React 18, TypeScript 5.4, Tailwind CSS, 0 errors |
 | Database Engine | RUNNING (Port 3306) | MySQL 9.7 (`medipriority_db`), `medipriority_user` |
 | Flyway Migrations | V1 to V12 APPLIED | All 12 migrations successfully applied with initial seed data |
-| Unit Tests | ALL 31 PASS | 24 DSA tests + 7 Service tests, 0 failures, 0 errors |
+| Unit Tests | ALL 43 PASS | 24 DSA tests + 7 Service tests + 6 Lifecycle tests + 6 Auth tests, 0 failures, 0 errors |
 | Integration Suite | ALL 10 STEPS PASS | Login, Patients, Emergency, Triage, Heap PQ, Ambulance, Bed, History, Audit, Dashboard |
 
 

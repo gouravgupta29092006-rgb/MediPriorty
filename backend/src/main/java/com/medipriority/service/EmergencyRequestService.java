@@ -26,6 +26,7 @@ public class EmergencyRequestService {
     private final TriageRecordRepository triageRecordRepository;
     private final PatientService patientService;
     private final AuditService auditService;
+    private final PriorityQueueService priorityQueueService;
 
     private static final AtomicLong SEQUENCE = new AtomicLong(1);
 
@@ -68,16 +69,21 @@ public class EmergencyRequestService {
                 || newStatus == EmergencyRequest.RequestStatus.CANCELLED) {
             er.setClosedAt(LocalDateTime.now());
         }
+        EmergencyRequest saved = requestRepository.save(er);
         auditService.log(actingUserId, "REQUEST_STATUS_UPDATED", "EmergencyRequest", id,
                 "{\"status\":\"" + newStatus + "\"}");
-        return toResponse(requestRepository.save(er));
+
+        if (saved.isQueueEligible()) {
+            priorityQueueService.rebuildFromDatabase();
+        } else {
+            priorityQueueService.handleRequestLifecycleChange(id);
+        }
+
+        return toResponse(saved);
     }
 
     public List<EmergencyRequest> getActiveTriagedRequests() {
-        return requestRepository.findByRequestStatusIn(List.of(
-                EmergencyRequest.RequestStatus.TRIAGED,
-                EmergencyRequest.RequestStatus.AMBULANCE_DISPATCHED,
-                EmergencyRequest.RequestStatus.BED_RESERVED));
+        return requestRepository.findQueueEligibleRequests(PriorityQueueService.ELIGIBLE_STATUSES);
     }
 
     public EmergencyRequest getOrThrow(Long id) {

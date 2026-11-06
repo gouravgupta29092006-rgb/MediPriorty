@@ -8,8 +8,10 @@ import {
 } from 'lucide-react';
 import api from '../api/client';
 import { EmergencyRequest, Patient, RequestStatus, BedType } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 export const EmergencyRequestsPage: React.FC = () => {
+  const { hasRole } = useAuth();
   const [requests, setRequests] = useState<EmergencyRequest[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>('');
@@ -262,7 +264,7 @@ export const EmergencyRequestsPage: React.FC = () => {
                           </button>
                         )}
 
-                        {r.requestStatus === 'TRIAGED' && (
+                        {r.requestStatus === 'TRIAGED' && hasRole(['DISPATCHER']) && (
                           <button
                             onClick={() => navigate(`/ambulances?dispatchRequestId=${r.requestId}`)}
                             className="px-3 py-1 rounded-lg bg-accent-light border border-[var(--border)] text-accent hover:bg-accent hover:text-white text-[11px] font-bold transition-all shadow-sm"

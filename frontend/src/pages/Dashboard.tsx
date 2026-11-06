@@ -13,8 +13,10 @@ import {
 } from 'lucide-react';
 import api from '../api/client';
 import { QueueEntry, DashboardResponse } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 export const Dashboard: React.FC = () => {
+  const { hasRole } = useAuth();
   const [data, setData] = useState<DashboardResponse | null>(null);
   const [queue, setQueue] = useState<QueueEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -338,12 +340,14 @@ export const Dashboard: React.FC = () => {
                       <span className={`px-2.5 py-0.5 rounded-lg text-[11px] font-bold border ${badgeColor}`}>
                         {item.triageCategory} (P{item.priorityValue})
                       </span>
-                      <Link
-                        to="/ambulances"
-                        className="px-3 py-1.5 rounded-lg bg-accent hover:bg-accent-hover text-white text-xs font-semibold shadow-sm transition-all"
-                      >
-                        Dispatch
-                      </Link>
+                      {hasRole(['DISPATCHER']) && (
+                        <Link
+                          to={`/ambulances?dispatchRequestId=${item.requestId}`}
+                          className="px-3 py-1.5 rounded-lg bg-accent hover:bg-accent-hover text-white text-xs font-semibold shadow-sm transition-all"
+                        >
+                          Dispatch
+                        </Link>
+                      )}
                     </div>
                   </div>
                 );

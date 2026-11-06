@@ -37,6 +37,8 @@ class BedAllocationServiceTest {
     private UserRepository userRepository;
     @Mock
     private AuditService auditService;
+    @Mock
+    private PriorityQueueService priorityQueueService;
 
     @InjectMocks
     private BedAllocationService bedAllocationService;

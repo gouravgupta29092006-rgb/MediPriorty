@@ -3,6 +3,42 @@
 All notable changes to this project will be documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.7.0] — 2026-11-06
+
+### Fixed
+- **Priority Queue Lifecycle & Patient Discharge Integrity:**
+  - Excluded `CLOSED`, `ADMITTED`, and `CANCELLED` emergency requests from appearing in the Priority Min-Heap queue.
+  - Added `isQueueEligible()` predicate to `EmergencyRequest` model to centralize queue eligibility (`TRIAGED`, `AMBULANCE_DISPATCHED`, `ARRIVED`, `BED_RESERVED`).
+  - Added `findQueueEligibleRequests()` to `EmergencyRequestRepository` to strictly query active requests with valid triage records.
+  - Updated `PriorityQueueService` to rebuild and synchronize with MySQL on every `getOrderedQueue()` and `peekHighestPriority()` call.
+  - Added `handleRequestLifecycleChange()` in `PriorityQueueService` called by `BedAllocationService` and `EmergencyRequestService` on status transitions.
+- **Dispatcher-Only Ambulance Authorization:**
+  - Restricted ambulance dispatch endpoints (`POST /api/allocations/ambulance/auto`, `POST /api/allocations/ambulance/manual`, `PATCH /api/allocations/ambulance/*/arrived`, `PATCH /api/allocations/ambulance/*/complete`) strictly to `DISPATCHER` role.
+  - Denied access to `ADMIN` and `MEDICAL_OFFICER` roles with HTTP 403 Forbidden.
+  - Added dedicated `AuthenticationEntryPoint` in `SecurityConfig` returning HTTP 401 Unauthorized with JSON error payload for unauthenticated requests.
+  - Updated frontend pages (`AmbulancesPage`, `Dashboard`, `EmergencyRequestsPage`, `PriorityQueuePage`) to hide dispatch action buttons for non-dispatchers and render role restriction notices.
+- **Queue Synchronization & Frontend Responsiveness:**
+  - Automated heap invalidation and reconstruction during admissions, releases, dispatches, and arrivals.
+  - Shortened polling interval in `PriorityQueuePage` to 4s for responsive real-time queue synchronization.
+
+### Added
+- `PriorityQueueLifecycleTest` with 6 unit tests covering:
+  - Empty queue handling
+  - Exclusion of closed and discharged requests
+  - Exclusion of admitted and cancelled requests
+  - Strict clinical urgency ordering (RED > ORANGE > YELLOW > GREEN)
+  - Tie-breaking on registration timestamp and request ID
+  - Lifecycle change eviction of discharged patients
+- `AmbulanceDispatchAuthorizationTest` with 6 MockMvc security tests covering:
+  - Dispatcher permitted to auto-dispatch
+  - Admin forbidden from auto-dispatching (403)
+  - Medical officer forbidden from auto-dispatching (403)
+  - Unauthenticated request returns 401 Unauthorized
+  - Admin forbidden from completing ambulance runs (403)
+  - Dispatcher permitted to complete ambulance runs
+
+---
+
 ## [0.6.0] — 2026-11-06
 
 ### Fixed

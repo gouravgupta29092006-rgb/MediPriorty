@@ -146,3 +146,26 @@
 - [x] Backend compilation: 92 classes, BUILD SUCCESS
 - [x] Frontend compilation: tsc && vite build, BUILD SUCCESS
 - [x] Automated test suite: 31 tests passing, 0 failures, 0 errors
+
+---
+
+## Phase 15 — Operational Data Integrity & Modernization
+- [x] Scoped critical triage alerts and severity breakdown to active emergency requests
+- [x] Modernized clinical terminology across Priority Queue and Ambulance Dispatch interfaces
+- [x] Repaired Analytics charts (Department bed counts, maintenance ambulance inclusion, rotated labels)
+- [x] Published changes to GitHub `main` branch
+
+---
+
+## Phase 16 — Priority Queue Integrity & Dispatcher Authorization
+- [x] Added `isQueueEligible()` predicate to `EmergencyRequest` model
+- [x] Created `findQueueEligibleRequests()` in `EmergencyRequestRepository`
+- [x] Synchronized Priority Min-Heap with MySQL database on every query
+- [x] Added `handleRequestLifecycleChange()` for lifecycle-driven queue invalidation and rebuild
+- [x] Restricted ambulance dispatch endpoints strictly to `DISPATCHER` in backend SecurityConfig and controller annotations
+- [x] Added `AuthenticationEntryPoint` returning HTTP 401 JSON for unauthenticated requests
+- [x] Updated frontend dispatch controls to restrict display to `DISPATCHER` role
+- [x] Created `PriorityQueueLifecycleTest` (6 tests passing)
+- [x] Created `AmbulanceDispatchAuthorizationTest` (6 tests passing)
+- [x] Total automated test suite: 43 tests passing, 0 failures, 0 errors
+- [x] Frontend build clean: 0 TypeScript errors

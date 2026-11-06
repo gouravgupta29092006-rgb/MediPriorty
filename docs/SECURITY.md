@@ -43,11 +43,28 @@ Role-based access control enforced at two levels:
 | GET /api/dashboard/** | ADMIN, DISPATCHER, MEDICAL_OFFICER |
 | POST /api/patients | DISPATCHER, ADMIN |
 | POST /api/triage/** | MEDICAL_OFFICER, ADMIN |
-| POST /api/allocations/** | DISPATCHER, ADMIN |
+| POST /api/allocations/ambulance/** | DISPATCHER (Strictly enforced) |
+| PATCH /api/allocations/ambulance/** | DISPATCHER (Strictly enforced) |
+| POST /api/allocations/bed/auto, /manual | MEDICAL_OFFICER, ADMIN |
+| PATCH /api/allocations/bed/*/admit, /release | MEDICAL_OFFICER, ADMIN |
+| GET /api/allocations/** | DISPATCHER, MEDICAL_OFFICER, ADMIN |
 | GET /api/audit-logs | ADMIN |
 | POST /api/users | ADMIN |
 | PUT /api/users/** | ADMIN |
 | POST /api/ambulances | ADMIN |
+| POST /api/beds | ADMIN |
+
+---
+
+## Authentication Entry Point & Failure Handling
+
+Unauthenticated requests to protected endpoints are intercepted by a dedicated `AuthenticationEntryPoint` in `SecurityConfig.java`, returning:
+- HTTP Status: `401 Unauthorized`
+- Body: `{"error":"Unauthorized","message":"Authentication required"}`
+- Content-Type: `application/json`
+
+Forbidden actions by authenticated users lacking specific roles (e.g., ADMIN attempting ambulance auto-dispatch) return:
+- HTTP Status: `403 Forbidden`
 | POST /api/beds | ADMIN |
 
 ---
