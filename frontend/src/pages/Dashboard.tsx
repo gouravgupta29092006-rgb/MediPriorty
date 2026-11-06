@@ -12,23 +12,10 @@ import {
   HeartPulse
 } from 'lucide-react';
 import api from '../api/client';
-import { QueueEntry } from '../types';
-
-interface DashboardData {
-  totalActiveRequests: number;
-  criticalPatients: number;
-  waitingPatients: number;
-  availableAmbulances: number;
-  dispatchedAmbulances: number;
-  availableBeds: number;
-  occupiedBeds: number;
-  totalBeds: number;
-  triageCategoryDistribution: Record<string, number>;
-  bedTypeAvailability: Record<string, number>;
-}
+import { QueueEntry, DashboardResponse } from '../types';
 
 export const Dashboard: React.FC = () => {
-  const [data, setData] = useState<DashboardData | null>(null);
+  const [data, setData] = useState<DashboardResponse | null>(null);
   const [queue, setQueue] = useState<QueueEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -36,7 +23,7 @@ export const Dashboard: React.FC = () => {
   const fetchDashboard = async () => {
     try {
       const [dashRes, queueRes] = await Promise.all([
-        api.get<DashboardData>('/dashboard'),
+        api.get<DashboardResponse>('/dashboard'),
         api.get<QueueEntry[]>('/priority-queue')
       ]);
       setData(dashRes.data);
@@ -75,6 +62,20 @@ export const Dashboard: React.FC = () => {
   const orangeCount = data?.triageCategoryDistribution?.ORANGE || 0;
   const yellowCount = data?.triageCategoryDistribution?.YELLOW || 0;
   const greenCount = data?.triageCategoryDistribution?.GREEN || 0;
+
+  const totalAmbulances =
+    (data?.availableAmbulances ?? 0) +
+    (data?.dispatchedAmbulances ?? 0) +
+    (data?.onSceneAmbulances ?? 0) +
+    (data?.returningAmbulances ?? 0) +
+    (data?.reservedAmbulances ?? 0) +
+    (data?.maintenanceAmbulances ?? 0);
+
+  const activeAmbulances =
+    (data?.dispatchedAmbulances ?? 0) +
+    (data?.onSceneAmbulances ?? 0) +
+    (data?.returningAmbulances ?? 0) +
+    (data?.reservedAmbulances ?? 0);
 
   return (
     <div className="space-y-6">
@@ -192,12 +193,12 @@ export const Dashboard: React.FC = () => {
               {data?.availableAmbulances ?? 0}
             </span>
             <span className="text-xs text-text-secondary font-medium">
-              available / {(data?.availableAmbulances ?? 0) + (data?.dispatchedAmbulances ?? 0)} total
+              available / {totalAmbulances} total
             </span>
           </div>
           <div className="mt-4 pt-3 border-t border-[var(--border)] flex items-center justify-between text-xs text-text-secondary">
             <span>Dispatched / Active:</span>
-            <span className="font-bold text-[var(--warning)]">{data?.dispatchedAmbulances ?? 0}</span>
+            <span className="font-bold text-[var(--warning)]">{activeAmbulances}</span>
           </div>
         </div>
 

@@ -11,12 +11,13 @@ import {
   Cell,
   Legend,
 } from 'recharts';
-import { BarChart3, RefreshCw, Activity, Bed, Truck } from 'lucide-react';
+import { BarChart3, RefreshCw, Activity, Bed, Truck, CheckCircle2 } from 'lucide-react';
 import api from '../api/client';
 import { useTheme } from '../context/ThemeContext';
+import { DashboardResponse } from '../types';
 
 export const AnalyticsPage: React.FC = () => {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<DashboardResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { theme } = useTheme();
@@ -25,7 +26,7 @@ export const AnalyticsPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await api.get('/dashboard');
+      const res = await api.get<DashboardResponse>('/dashboard');
       setData(res.data);
     } catch (err) {
       console.error('Failed to load analytics', err);
@@ -39,26 +40,63 @@ export const AnalyticsPage: React.FC = () => {
     fetchAnalytics();
   }, []);
 
-  const triageData = [
-    { name: 'RED (Critical)', value: data?.triageCategoryDistribution?.RED || 0, color: '#D94A4A' },
-    { name: 'ORANGE (High)', value: data?.triageCategoryDistribution?.ORANGE || 0, color: '#D97706' },
-    { name: 'YELLOW (Moderate)', value: data?.triageCategoryDistribution?.YELLOW || 0, color: '#CA8A04' },
-    { name: 'GREEN (Low)', value: data?.triageCategoryDistribution?.GREEN || 0, color: '#168653' },
-  ];
+  const totalTriageActive =
+    (data?.triageCategoryDistribution?.RED || 0) +
+    (data?.triageCategoryDistribution?.ORANGE || 0) +
+    (data?.triageCategoryDistribution?.YELLOW || 0) +
+    (data?.triageCategoryDistribution?.GREEN || 0);
 
-  const bedData = [
-    { name: 'ICU Beds', Available: data?.bedTypeAvailability?.ICU || 0, Occupied: data?.bedTypeOccupied?.ICU || 0 },
-    { name: 'Emergency Trauma', Available: data?.bedTypeAvailability?.EMERGENCY || 0, Occupied: data?.bedTypeOccupied?.EMERGENCY || 0 },
-    { name: 'General Medicine', Available: data?.bedTypeAvailability?.GENERAL || 0, Occupied: data?.bedTypeOccupied?.GENERAL || 0 },
+  const triageData = [
+    { name: 'RED (Critical)', value: data?.triageCategoryDistribution?.RED || 0, color: '#DC2626' },
+    { name: 'ORANGE (High)', value: data?.triageCategoryDistribution?.ORANGE || 0, color: '#EA580C' },
+    { name: 'YELLOW (Moderate)', value: data?.triageCategoryDistribution?.YELLOW || 0, color: '#CA8A04' },
+    { name: 'GREEN (Low)', value: data?.triageCategoryDistribution?.GREEN || 0, color: '#16A34A' },
   ];
+  const activeTriageData = triageData.filter((d) => d.value > 0);
+
+  const bedData =
+    data?.departmentBeds && data.departmentBeds.length > 0
+      ? data.departmentBeds.map((dept) => ({
+          name: dept.departmentName,
+          Available: dept.availableBeds,
+          Occupied: dept.occupiedBeds,
+          Total: dept.totalBeds,
+        }))
+      : [
+          {
+            name: 'Emergency & Trauma Center',
+            Available: data?.bedTypeAvailability?.EMERGENCY || 0,
+            Occupied: data?.bedTypeOccupied?.EMERGENCY || 0,
+            Total: (data?.bedTypeAvailability?.EMERGENCY || 0) + (data?.bedTypeOccupied?.EMERGENCY || 0),
+          },
+          {
+            name: 'Intensive Care Unit (ICU)',
+            Available: data?.bedTypeAvailability?.ICU || 0,
+            Occupied: data?.bedTypeOccupied?.ICU || 0,
+            Total: (data?.bedTypeAvailability?.ICU || 0) + (data?.bedTypeOccupied?.ICU || 0),
+          },
+          {
+            name: 'Cardiology Care Unit',
+            Available: 0,
+            Occupied: 0,
+            Total: 0,
+          },
+          {
+            name: 'General Medicine Ward',
+            Available: data?.bedTypeAvailability?.GENERAL || 0,
+            Occupied: data?.bedTypeOccupied?.GENERAL || 0,
+            Total: (data?.bedTypeAvailability?.GENERAL || 0) + (data?.bedTypeOccupied?.GENERAL || 0),
+          },
+        ];
 
   const fleetData = [
-    { name: 'Available', value: data?.availableAmbulances || 0, color: '#168653' },
+    { name: 'Available', value: data?.availableAmbulances || 0, color: '#16A34A' },
     { name: 'Dispatched', value: data?.dispatchedAmbulances || 0, color: '#2563EB' },
     { name: 'On Scene', value: data?.onSceneAmbulances || 0, color: '#7C3AED' },
-    { name: 'Returning', value: data?.returningAmbulances || 0, color: '#D97706' },
+    { name: 'Returning', value: data?.returningAmbulances || 0, color: '#EA580C' },
     { name: 'Reserved', value: data?.reservedAmbulances || 0, color: '#0891B2' },
-  ].filter(d => d.value > 0);
+    { name: 'Maintenance', value: data?.maintenanceAmbulances || 0, color: '#64748B' },
+  ].filter((d) => d.value > 0);
 
   const tooltipStyle = {
     backgroundColor: theme === 'dark' ? '#1A292E' : '#FFFFFF',
@@ -119,32 +157,40 @@ export const AnalyticsPage: React.FC = () => {
                 <Activity className="w-4 h-4 text-[var(--critical)]" />
                 <span>Triage Urgency Category Distribution</span>
               </h3>
-              <p className="text-xs text-text-secondary mt-0.5">Clinical urgency classification breakdown</p>
+              <p className="text-xs text-text-secondary mt-0.5">Active clinical urgency classification breakdown</p>
             </div>
 
-            <div className="h-72 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={triageData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={65}
-                    outerRadius={100}
-                    paddingAngle={4}
-                    dataKey="value"
-                  >
-                    {triageData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
-                    ))}
-                  </Pie>
-                  <Tooltip contentStyle={tooltipStyle} />
-                  <Legend
-                    formatter={(value) => <span className="text-xs font-medium text-text-secondary">{value}</span>}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+            {totalTriageActive === 0 ? (
+              <div className="h-72 w-full flex flex-col items-center justify-center text-text-muted border border-dashed border-[var(--border)] rounded-xl bg-bg-surface-2/30">
+                <CheckCircle2 className="w-10 h-10 text-[var(--success)] mb-2" />
+                <p className="text-sm font-bold text-text-primary">No Active Emergency Triage Cases</p>
+                <p className="text-xs text-text-secondary mt-1">All current emergency episodes are triaged and allocated</p>
+              </div>
+            ) : (
+              <div className="h-72 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={activeTriageData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={65}
+                      outerRadius={100}
+                      paddingAngle={4}
+                      dataKey="value"
+                    >
+                      {activeTriageData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={tooltipStyle} />
+                    <Legend
+                      formatter={(value) => <span className="text-xs font-medium text-text-secondary">{value}</span>}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </div>
 
           {/* Fleet Availability */}
@@ -157,29 +203,37 @@ export const AnalyticsPage: React.FC = () => {
               <p className="text-xs text-text-secondary mt-0.5">Immediate response capacity</p>
             </div>
 
-            <div className="h-72 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={fleetData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={65}
-                    outerRadius={100}
-                    paddingAngle={4}
-                    dataKey="value"
-                  >
-                    {fleetData.map((entry, index) => (
-                      <Cell key={`cell-fleet-${index}`} fill={entry.color} stroke="none" />
-                    ))}
-                  </Pie>
-                  <Tooltip contentStyle={tooltipStyle} />
-                  <Legend
-                    formatter={(value) => <span className="text-xs font-medium text-text-secondary">{value}</span>}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+            {fleetData.length === 0 ? (
+              <div className="h-72 w-full flex flex-col items-center justify-center text-text-muted border border-dashed border-[var(--border)] rounded-xl bg-bg-surface-2/30">
+                <Truck className="w-10 h-10 text-accent mb-2 opacity-50" />
+                <p className="text-sm font-bold text-text-primary">No Fleet Data Available</p>
+                <p className="text-xs text-text-secondary mt-1">No ambulance units currently registered in database</p>
+              </div>
+            ) : (
+              <div className="h-72 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={fleetData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={65}
+                      outerRadius={100}
+                      paddingAngle={4}
+                      dataKey="value"
+                    >
+                      {fleetData.map((entry, index) => (
+                        <Cell key={`cell-fleet-${index}`} fill={entry.color} stroke="none" />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={tooltipStyle} />
+                    <Legend
+                      formatter={(value) => <span className="text-xs font-medium text-text-secondary">{value}</span>}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </div>
 
           {/* Bed Capacity Bar Chart */}
@@ -189,18 +243,33 @@ export const AnalyticsPage: React.FC = () => {
                 <Bed className="w-4 h-4 text-accent" />
                 <span>Bed Availability by Department</span>
               </h3>
-              <p className="text-xs text-text-secondary mt-0.5">Current bed availability count</p>
+              <p className="text-xs text-text-secondary mt-0.5">Real-time department capacity and occupancy counts</p>
             </div>
 
-            <div className="h-72 w-full">
+            <div className="h-80 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={bedData}>
-                  <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={11} />
-                  <YAxis stroke="var(--text-muted)" fontSize={11} />
-                  <Tooltip contentStyle={tooltipStyle} />
-                  <Legend formatter={(val) => <span className="text-xs font-medium text-text-secondary">{val}</span>} />
+                <BarChart data={bedData} margin={{ top: 15, right: 30, left: 0, bottom: 45 }}>
+                  <XAxis
+                    dataKey="name"
+                    stroke="var(--text-muted)"
+                    fontSize={11}
+                    angle={-15}
+                    textAnchor="end"
+                    interval={0}
+                  />
+                  <YAxis stroke="var(--text-muted)" fontSize={11} allowDecimals={false} />
+                  <Tooltip
+                    contentStyle={tooltipStyle}
+                    formatter={(value: any, name: any) => [`${value} Beds`, name]}
+                  />
+                  <Legend
+                    verticalAlign="top"
+                    align="right"
+                    wrapperStyle={{ paddingBottom: 12 }}
+                    formatter={(val) => <span className="text-xs font-medium text-text-secondary">{val} Beds</span>}
+                  />
                   <Bar dataKey="Available" fill="#2563EB" radius={[6, 6, 0, 0]} />
-                  <Bar dataKey="Occupied" fill="#D99A28" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="Occupied" fill="#D97706" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

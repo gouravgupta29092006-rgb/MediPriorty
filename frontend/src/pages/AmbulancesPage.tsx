@@ -309,12 +309,12 @@ export const AmbulancesPage: React.FC = () => {
                 onChange={(e) => setRouteSource(e.target.value)}
                 className="w-full p-2 bg-bg-surface-2 border border-[var(--border)] rounded-lg text-xs text-text-primary"
               >
-                <option value="1">Node 1: Hospital</option>
-                <option value="2">Node 2: North EMS</option>
-                <option value="3">Node 3: South EMS</option>
-                <option value="4">Node 4: Downtown</option>
-                <option value="5">Node 5: West River</option>
-                <option value="6">Node 6: East Junction</option>
+                <option value="1">Hospital Base (Station 1)</option>
+                <option value="2">North EMS Station (Station 2)</option>
+                <option value="3">South EMS Station (Station 3)</option>
+                <option value="4">Downtown Center Plaza (Zone 4)</option>
+                <option value="5">West River Crossing (Zone 5)</option>
+                <option value="6">East Highway Junction (Zone 6)</option>
               </select>
             </div>
 
@@ -325,12 +325,12 @@ export const AmbulancesPage: React.FC = () => {
                 onChange={(e) => setRouteDest(e.target.value)}
                 className="w-full p-2 bg-bg-surface-2 border border-[var(--border)] rounded-lg text-xs text-text-primary"
               >
-                <option value="1">Node 1: Hospital</option>
-                <option value="2">Node 2: North EMS</option>
-                <option value="3">Node 3: South EMS</option>
-                <option value="4">Node 4: Downtown</option>
-                <option value="5">Node 5: West River</option>
-                <option value="6">Node 6: East Junction</option>
+                <option value="1">Hospital Base (Station 1)</option>
+                <option value="2">North EMS Station (Station 2)</option>
+                <option value="3">South EMS Station (Station 3)</option>
+                <option value="4">Downtown Center Plaza (Zone 4)</option>
+                <option value="5">West River Crossing (Zone 5)</option>
+                <option value="6">East Highway Junction (Zone 6)</option>
               </select>
             </div>
           </div>

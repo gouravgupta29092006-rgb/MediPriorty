@@ -60,3 +60,35 @@ On the Command Center Login page, click any of the **Quick Demo Credentials** bu
 3. Navigate to **Emergency Analytics**:
    - Review operational metrics: average triage-to-dispatch turnaround time, triage distribution charts, and bed occupancy rates.
 
+---
+
+## 3. Verification Scenarios for Metric Scoping & UI Polish
+
+### Scenario F: Dashboard Queue Scoping & Alert Integrity
+1. **Empty Queue Verification:**
+   - When no active emergency cases exist (or after completing/closing all requests), navigate to the **Dashboard**.
+   - Verify that **Active Emergencies** displays `0`, **Patient Priority Queue** displays `0`, the critical alert banner is **hidden**, and the **Triage Severity Distribution** reflects `0` for all categories.
+2. **Active Incident Verification:**
+   - Create and triage an emergency case into **RED**.
+   - Observe that the critical alert banner immediately triggers on the Dashboard showing `CRITICAL TRIAGE ALERT: 1 Patient in Category RED`.
+   - Priority Queue renders the patient at `#1 (Highest Priority)`.
+
+### Scenario G: Ambulance Route & Travel-Time Estimator
+1. Navigate to **Ambulances & Dispatch** (`/ambulances`).
+2. Under the **Ambulance Route & Travel-Time Estimator** panel:
+   - Select Starting Location: `North EMS Station (Station 2)`.
+   - Select Destination: `Hospital Base (Station 1)`.
+   - Click **Calculate Route**.
+   - Verify the calculated optimal travel time (e.g., 8.5 mins) via Dijkstra pathfinding on the road graph.
+
+### Scenario H: Operational Analytics Verification
+1. Navigate to **Analytics & KPIs** (`/analytics`).
+2. **Triage Urgency Category Distribution:**
+   - Displays real active cases with severity colors (RED, ORANGE, YELLOW, GREEN).
+   - If 0 active cases are pending, renders an informative empty-state ("No Active Emergency Triage Cases") without NaN or chart breakage.
+3. **Ambulance Fleet Readiness Status:**
+   - Renders a clean doughnut chart covering all registered statuses (`Available`, `Dispatched`, `On Scene`, `Returning`, `Reserved`, `Maintenance`).
+4. **Bed Availability by Department:**
+   - Displays real hospital departments (`Emergency & Trauma Center`, `Intensive Care Unit (ICU)`, `Cardiology Care Unit`, `General Medicine Ward`) with database-backed Available and Occupied bars.
+   - Verify that department labels are cleanly angled (`-15°`) and completely visible without clipping.
+

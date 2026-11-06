@@ -31,4 +31,11 @@ public interface TriageRecordRepository extends JpaRepository<TriageRecord, Long
            "WHERE t2.emergencyRequest.requestId = t.emergencyRequest.requestId) " +
            "GROUP BY t.triageCategory")
     List<Object[]> countByTriageCategoryGrouped();
+
+    @Query("SELECT t.triageCategory, COUNT(t) FROM TriageRecord t " +
+           "WHERE t.emergencyRequest.requestStatus NOT IN ('CLOSED', 'CANCELLED') " +
+           "AND t.assessmentVersion = (SELECT MAX(t2.assessmentVersion) FROM TriageRecord t2 " +
+           "WHERE t2.emergencyRequest.requestId = t.emergencyRequest.requestId) " +
+           "GROUP BY t.triageCategory")
+    List<Object[]> countActiveByTriageCategoryGrouped();
 }

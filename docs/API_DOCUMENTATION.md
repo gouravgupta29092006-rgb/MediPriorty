@@ -71,6 +71,10 @@
     "waitingPatients": 3,
     "availableAmbulances": 6,
     "dispatchedAmbulances": 2,
+    "onSceneAmbulances": 1,
+    "returningAmbulances": 1,
+    "reservedAmbulances": 0,
+    "maintenanceAmbulances": 1,
     "availableBeds": 15,
     "occupiedBeds": 5,
     "totalBeds": 20,
@@ -84,7 +88,38 @@
       "ICU": 3,
       "EMERGENCY": 5,
       "GENERAL": 7
-    }
+    },
+    "bedTypeOccupied": {
+      "ICU": 2,
+      "EMERGENCY": 1,
+      "GENERAL": 2
+    },
+    "departmentBeds": [
+      {
+        "departmentName": "Emergency & Trauma Center",
+        "availableBeds": 5,
+        "occupiedBeds": 0,
+        "totalBeds": 5
+      },
+      {
+        "departmentName": "Intensive Care Unit (ICU)",
+        "availableBeds": 3,
+        "occupiedBeds": 2,
+        "totalBeds": 5
+      },
+      {
+        "departmentName": "Cardiology Care Unit",
+        "availableBeds": 3,
+        "occupiedBeds": 1,
+        "totalBeds": 4
+      },
+      {
+        "departmentName": "General Medicine Ward",
+        "availableBeds": 4,
+        "occupiedBeds": 2,
+        "totalBeds": 6
+      }
+    ]
   }
   ```
 

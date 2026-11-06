@@ -72,7 +72,7 @@ export const PriorityQueuePage: React.FC = () => {
             <span>Emergency Patient Priority Queue</span>
           </h2>
           <p className="text-xs text-text-secondary mt-1">
-            Powered by Array-Backed Binary Min-Heap (<code className="font-mono text-accent">com.medipriority.dsa.heap.PatientPriorityQueue</code>)
+            Real-time clinical urgency ranking and deterministic allocation queue (Min-Heap Engine)
           </p>
         </div>
 
@@ -102,15 +102,15 @@ export const PriorityQueuePage: React.FC = () => {
         </div>
       </div>
 
-      {/* DSA Educational Explainer Banner */}
+      {/* Clinical Operations Explainer Banner */}
       <div className="p-5 rounded-2xl bg-accent-light border border-[var(--border)] flex items-start gap-4 shadow-sm">
         <div className="w-9 h-9 rounded-xl bg-bg-surface border border-[var(--border)] flex items-center justify-center flex-shrink-0 text-accent shadow-sm">
           <Info className="w-5 h-5" />
         </div>
         <div className="text-xs space-y-1">
-          <p className="font-bold text-text-primary">How the Priority Min-Heap Works</p>
+          <p className="font-bold text-text-primary">Clinical Urgency Ordering & Automated Priority Balancing</p>
           <p className="text-text-secondary leading-relaxed">
-            Patients are ordered by <strong className="text-text-primary">1) Clinical Urgency</strong> (RED = 1, ORANGE = 2, YELLOW = 3, GREEN = 4). Ties are broken strictly by <strong className="text-text-primary">2) Registration Timestamp</strong> (earlier arrival first), followed by <strong className="text-text-primary">3) Request ID</strong> for deterministic uniqueness. Clinical reassessment utilizes <strong className="text-text-primary">Version Registry</strong> to lazily purge stale entries without scanning the array.
+            Patients are ordered primarily by <strong className="text-text-primary">1) Clinical Urgency</strong> (RED = Priority 1, ORANGE = Priority 2, YELLOW = Priority 3, GREEN = Priority 4). Equal urgency ties are resolved by <strong className="text-text-primary">2) Registration Time</strong> (earliest arrival first), followed by <strong className="text-text-primary">3) Request ID</strong> for deterministic consistency. Clinical reassessments synchronize priorities automatically to ensure high-acuity patients are surfaced immediately.
           </p>
         </div>
       </div>

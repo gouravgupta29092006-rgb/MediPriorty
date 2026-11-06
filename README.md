@@ -42,8 +42,8 @@ Conventional hospital emergency departments and ambulance dispatch networks ofte
 | **Clinical Triage Sign-Off** | Role-restricted assessment with vital signs recording and multi-stage state transitions. |
 | **Role-Based Access Control** | Stateless JWT authentication protecting routes across `ADMIN`, `DISPATCHER`, and `MEDICAL_OFFICER`. |
 | **Immutable Audit Trail** | Automated system audit logging capturing actor, timestamp, client IP, action, and JSON payload. |
-| **Operational Analytics** | Real-time distribution visualizations and triage turnaround metrics using Recharts. |
-| **Healthcare UI/UX System** | Responsive 11-page command center styled with a healthcare teal palette and light/dark theme support. |
+| **Operational Analytics** | Real-time distribution visualizations, full 6-status ambulance readiness, and real department bed metrics via Recharts. |
+| **Healthcare UI/UX System** | Responsive 11-page command center styled with a healthcare teal palette, modernized clinical terminology, and light/dark theme support. |
 
 ---
 

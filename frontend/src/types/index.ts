@@ -159,6 +159,32 @@ export interface AuditLog {
   createdAt: string;
 }
 
+export interface DepartmentBedStats {
+  departmentName: string;
+  availableBeds: number;
+  occupiedBeds: number;
+  totalBeds: number;
+}
+
+export interface DashboardResponse {
+  totalActiveRequests: number;
+  criticalPatients: number;
+  waitingPatients: number;
+  availableAmbulances: number;
+  dispatchedAmbulances: number;
+  onSceneAmbulances: number;
+  returningAmbulances: number;
+  reservedAmbulances: number;
+  maintenanceAmbulances: number;
+  availableBeds: number;
+  occupiedBeds: number;
+  totalBeds: number;
+  triageCategoryDistribution: Record<string, number>;
+  bedTypeAvailability: Record<string, number>;
+  bedTypeOccupied: Record<string, number>;
+  departmentBeds: DepartmentBedStats[];
+}
+
 export interface DashboardStats {
   activeEmergencyRequests: number;
   pendingTriageCount: number;

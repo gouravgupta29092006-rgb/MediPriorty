@@ -3,6 +3,26 @@
 All notable changes to this project will be documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.6.0] — 2026-11-06
+
+### Fixed
+- **Dashboard Metric Scoping & Data Integrity:**
+  - Resolved phantom critical alerts and false triage severity numbers by scoping `TriageRecordRepository` aggregations strictly to active emergency requests (`requestStatus NOT IN ('CLOSED', 'CANCELLED')`).
+  - When zero active emergency requests are present, the critical alert banner now cleanly stays hidden, and triage distribution counts accurately show 0.
+- **Analytics Charts Repair & Complete Data Wiring:**
+  - **Chart A (Triage Urgency Category Distribution):** Handled zero-active state with a dedicated empty-state visual card; wired active-only counts with severity colors and formatted tooltips.
+  - **Chart B (Ambulance Fleet Readiness Status):** Added missing `MAINTENANCE` status reporting, accurately accounting for all 6 ambulance operational states.
+  - **Chart C (Bed Availability by Department):** Replaced hardcoded bed categories with dynamic database query `countBedsByDepartment()` querying all real hospital departments (`Emergency & Trauma Center`, `Intensive Care Unit (ICU)`, `Cardiology Care Unit`, `General Medicine Ward`). Fixed label clipping by rotating X-axis labels `-15°`, adding bottom margin, and expanding vertical chart height.
+- **Clinical Terminology Modernization:**
+  - Replaced computer-science/algorithmic labels across the Priority Queue page (`Ordered Heap Nodes` -> `Emergency Patient Priority List`, `Heap Rebuild O(n)` -> `Refresh Priority List`, `Heap Queue is Empty` -> `No Pending Emergency Allocations`).
+  - Modernized the Ambulance Fleet page: replaced `Dijkstra Shortest Path Probe` with `Ambulance Route & Travel-Time Estimator`, `Source Node` / `Destination Node` with `Starting Location` / `Destination`, `Calculate Route Weight` with `Calculate Route`, and graph node keys with clear station/district designations.
+
+### Added
+- `DepartmentBedStats` DTO in backend response model to provide real department-level bed aggregation.
+- `maintenanceAmbulances` count in `DashboardResponse` for complete fleet inventory tracking.
+
+---
+
 ## [0.5.0] — 2026-11-02
 
 ### Added

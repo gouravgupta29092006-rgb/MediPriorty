@@ -40,4 +40,15 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
     List<Object[]> countGroupedByStatus();
 
     long countByStatusAndBedType(BedStatus status, BedType type);
+
+    @Query("SELECT d.departmentName, " +
+           "SUM(CASE WHEN b.status = 'AVAILABLE' THEN 1L ELSE 0L END), " +
+           "SUM(CASE WHEN b.status = 'OCCUPIED' THEN 1L ELSE 0L END), " +
+           "COUNT(b.bedId) " +
+           "FROM HospitalDepartment d " +
+           "LEFT JOIN Bed b ON b.department.departmentId = d.departmentId " +
+           "WHERE d.active = true " +
+           "GROUP BY d.departmentId, d.departmentName " +
+           "ORDER BY d.departmentId")
+    List<Object[]> countBedsByDepartment();
 }

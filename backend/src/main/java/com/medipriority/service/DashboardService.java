@@ -1,6 +1,7 @@
 package com.medipriority.service;
 
 import com.medipriority.dto.response.DashboardResponse;
+import com.medipriority.dto.response.DepartmentBedStats;
 import com.medipriority.model.Ambulance;
 import com.medipriority.model.Bed;
 import com.medipriority.model.EmergencyRequest;
@@ -44,22 +45,24 @@ public class DashboardService {
                 .countByCurrentStatus(Ambulance.AmbulanceStatus.RETURNING);
         long reservedAmb = ambulanceRepository
                 .countByCurrentStatus(Ambulance.AmbulanceStatus.RESERVED);
+        long maintenanceAmb = ambulanceRepository
+                .countByCurrentStatus(Ambulance.AmbulanceStatus.MAINTENANCE);
 
         long availableBeds = bedRepository.countByStatus(Bed.BedStatus.AVAILABLE);
         long occupiedBeds = bedRepository.countByStatus(Bed.BedStatus.OCCUPIED);
         long totalBeds = bedRepository.count();
 
-        // Triage distribution — count ONLY the latest assessment version per request
+        // Triage distribution — count ONLY the latest assessment version of ACTIVE emergency requests
         Map<String, Long> triageDist = new HashMap<>();
         for (TriageRecord.TriageCategory cat : TriageRecord.TriageCategory.values()) {
             triageDist.put(cat.name(), 0L);
         }
-        triageRecordRepository.countByTriageCategoryGrouped()
+        triageRecordRepository.countActiveByTriageCategoryGrouped()
                 .forEach(row -> triageDist.put(
                         ((TriageRecord.TriageCategory) row[0]).name(),
                         (Long) row[1]));
 
-        // criticalPatients from the corrected grouped triage distribution (RED category)
+        // criticalPatients from the corrected active grouped triage distribution (RED category)
         long criticalPatients = triageDist.getOrDefault("RED", 0L);
 
         // Bed type availability (active departments only)
@@ -76,10 +79,20 @@ public class DashboardService {
             bedTypeOccupied.put(type.name(), occupied);
         }
 
+        // Department-level bed breakdown
+        List<DepartmentBedStats> departmentBeds = bedRepository.countBedsByDepartment().stream()
+                .map(row -> new DepartmentBedStats(
+                        (String) row[0],
+                        row[1] != null ? ((Number) row[1]).longValue() : 0L,
+                        row[2] != null ? ((Number) row[2]).longValue() : 0L,
+                        row[3] != null ? ((Number) row[3]).longValue() : 0L
+                ))
+                .toList();
+
         return new DashboardResponse(
                 activeRequests, criticalPatients, pendingTriage,
-                availableAmb, dispatchedAmb, onSceneAmb, returningAmb, reservedAmb,
+                availableAmb, dispatchedAmb, onSceneAmb, returningAmb, reservedAmb, maintenanceAmb,
                 availableBeds, occupiedBeds, totalBeds,
-                triageDist, bedTypeAvail, bedTypeOccupied);
+                triageDist, bedTypeAvail, bedTypeOccupied, departmentBeds);
     }
 }

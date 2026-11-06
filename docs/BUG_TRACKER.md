@@ -48,3 +48,27 @@ None. All discovered bugs have been resolved and verified by automated unit test
 - **Resolution:** Added `@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})` to `User` and `AuditLog`, and added `@JsonIgnore` to `User.passwordHash`.
 - **Status:** RESOLVED
 
+### BUG-006: Phantom Critical Triage Alert & Inconsistent Triage Counts on Inactive Queue
+- **Date Found:** 2026-11-06
+- **Severity:** HIGH
+- **Description:** When 0 active emergencies were pending, the Dashboard alert banner claimed 3 patients in Category RED, and triage severity breakdown reported RED: 3, ORANGE: 1, YELLOW: 1.
+- **Root Cause:** `TriageRecordRepository.countByTriageCategoryGrouped()` aggregated all historical triage records without scoping by `requestStatus NOT IN ('CLOSED', 'CANCELLED')`.
+- **Resolution:** Created `countActiveByTriageCategoryGrouped()` in `TriageRecordRepository` scoping by active requests only. Updated `DashboardService` to source critical counts and triage distribution exclusively from active episodes.
+- **Status:** RESOLVED
+
+### BUG-007: Analytics Bed Availability Chart Clipped Labels & Missing Real Departments
+- **Date Found:** 2026-11-06
+- **Severity:** MEDIUM
+- **Description:** Bed Availability chart hardcoded bed type keys (`ICU Beds`, `Emergency Trauma`, `General Medicine`), omitting the database's fourth department (`Cardiology Care Unit`), and X-axis labels clipped along the bottom edge.
+- **Root Cause:** Missing department-level bed aggregation query in backend, and absence of bottom margins/label rotation in frontend Recharts layout.
+- **Resolution:** Implemented `countBedsByDepartment()` in `BedRepository`, created `DepartmentBedStats` DTO, wired into `DashboardResponse`, and modernized `AnalyticsPage.tsx` with `-15°` angled text, bottom margin, and empty-state fallbacks.
+- **Status:** RESOLVED
+
+### BUG-008: Incomplete Ambulance Fleet Readiness Reporting (Missing Maintenance State)
+- **Date Found:** 2026-11-06
+- **Severity:** LOW
+- **Description:** Ambulance Fleet Readiness Status doughnut and KPI cards omitted vehicles under maintenance, causing fleet count mismatches.
+- **Root Cause:** `DashboardResponse` lacked `maintenanceAmbulances` field and frontend only summed available + dispatched.
+- **Resolution:** Added `maintenanceAmbulances` count to `DashboardResponse`, included maintenance status in `fleetData`, and recalculated total fleet from all 6 status categories.
+- **Status:** RESOLVED
+
