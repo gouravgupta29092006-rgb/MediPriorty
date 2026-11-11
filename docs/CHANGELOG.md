@@ -3,6 +3,42 @@
 All notable changes to this project will be documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.8.0] — 2026-11-11
+
+### Added
+- **Java Multithreading & Asynchronous Concurrency Architecture:**
+  - Implemented centralized `AsyncConfig` with `@EnableAsync` and three bounded, named `ThreadPoolTaskExecutor` thread pools:
+    - `analyticsExecutor` (core: 4, max: 8, queue: 100, prefix: `medipriority-analytics-`): concurrent evaluation of emergency metrics, ambulance fleet statistics, and bed occupancy breakdowns.
+    - `routingExecutor` (core: 4, max: 8, queue: 100, prefix: `medipriority-routing-`): concurrent Dijkstra shortest path route computations across candidate ambulances during auto-dispatch.
+    - `backgroundExecutor` (core: 2, max: 4, queue: 200, prefix: `medipriority-background-`): asynchronous operational maintenance and non-blocking logging.
+  - Decomposed `DashboardService.getDashboard()` into 3 independent parallel `CompletableFuture` subtasks joined with a bounded 4-second timeout and graceful error recovery.
+  - Added concurrent route queries in `RoadNetworkService` (`estimateTravelTimeAsync`, `estimateMultipleRoutesConcurrently`) and multithreaded candidate evaluation in `AmbulanceAllocationService.autoDispatch()`.
+  - Added `AsyncDashboardServiceTest` (2 tests) and `AsyncRoutingTest` (2 tests), expanding test suite to 47 passing tests.
+- **Medical-Themed Startup & Loading Experience:**
+  - Implemented `InitialMedicalLoader.tsx` matching the MediPriority clinical design system:
+    - Subtle ECG heartbeat SVG waveform animation (`animate-ecg` keyframe).
+    - Clinical initialization status progression: gateway initialization, session validation, credential check, command center preparation.
+    - Network error detection with actionable "Retry Gateway" and "Return to Login" recovery controls.
+    - Full light and dark mode compliance (`--bg-primary`, `--bg-surface`, `--accent`).
+  - Integrated into `AuthContext`, `ProtectedRoute`, and `Login` to eliminate blank screens, authentication flashing, and premature route redirects.
+- **Application-Wide Skeleton UI System:**
+  - Created reusable atomic skeleton primitives: `Skeleton`, `SkeletonText`, `SkeletonCard`, `SkeletonTable`, `SkeletonChart`.
+  - Created dedicated layout-matching page skeletons in `PageSkeletons.tsx`:
+    - `DashboardSkeleton`
+    - `PriorityQueueSkeleton`
+    - `EmergencyRequestsSkeleton`
+    - `TriageSkeleton`
+    - `AmbulancesSkeleton`
+    - `BedsSkeleton`
+    - `PatientsSkeleton`
+    - `AllocationsSkeleton`
+    - `AnalyticsSkeleton`
+    - `UsersSkeleton`
+    - `AuditLogsSkeleton`
+  - Integrated across all 11 frontend pages, cleanly differentiating initial loading states from background data refetches.
+
+---
+
 ## [0.7.0] — 2026-11-06
 
 ### Fixed

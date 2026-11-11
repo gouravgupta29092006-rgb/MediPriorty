@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FileText, RefreshCw, User as UserIcon } from 'lucide-react';
 import api from '../api/client';
 import { AuditLog } from '../types';
+import { AuditLogsSkeleton } from '../components/skeleton/PageSkeletons';
 
 export const AuditLogsPage: React.FC = () => {
   const [logs, setLogs] = useState<AuditLog[]>([]);
@@ -35,6 +36,10 @@ export const AuditLogsPage: React.FC = () => {
     if (action.includes('USER')) return 'bg-[#EDE9FE] text-[#7C3AED] border-[#DDD6FE]';
     return 'bg-bg-surface-2 text-text-secondary border-[var(--border)]';
   };
+
+  if (loading && logs.length === 0) {
+    return <AuditLogsSkeleton />;
+  }
 
   return (
     <div className="space-y-6">

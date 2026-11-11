@@ -14,6 +14,7 @@ import {
 import api from '../api/client';
 import { QueueEntry, DashboardResponse } from '../types';
 import { useAuth } from '../context/AuthContext';
+import { DashboardSkeleton } from '../components/skeleton/PageSkeletons';
 
 export const Dashboard: React.FC = () => {
   const { hasRole } = useAuth();
@@ -50,14 +51,7 @@ export const Dashboard: React.FC = () => {
   };
 
   if (loading && !data) {
-    return (
-      <div className="flex items-center justify-center h-96 text-text-muted">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm">Aggregating hospital metrics...</p>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   const redCount = data?.triageCategoryDistribution?.RED || 0;

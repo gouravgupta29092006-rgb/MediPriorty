@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ShieldCheck, Plus, X } from 'lucide-react';
 import api from '../api/client';
 import { User, Role } from '../types';
+import { UsersSkeleton } from '../components/skeleton/PageSkeletons';
 
 export const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -59,6 +60,10 @@ export const UsersPage: React.FC = () => {
       console.error('Failed to toggle user status', err);
     }
   };
+
+  if (loading && users.length === 0) {
+    return <UsersSkeleton />;
+  }
 
   return (
     <div className="space-y-6">

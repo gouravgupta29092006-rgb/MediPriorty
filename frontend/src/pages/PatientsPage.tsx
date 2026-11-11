@@ -8,6 +8,7 @@ import {
 import api from '../api/client';
 import { Patient } from '../types';
 import { useNavigate } from 'react-router-dom';
+import { PatientsSkeleton } from '../components/skeleton/PageSkeletons';
 
 export const PatientsPage: React.FC = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -83,6 +84,10 @@ export const PatientsPage: React.FC = () => {
       setSubmitting(false);
     }
   };
+
+  if (loading && patients.length === 0) {
+    return <PatientsSkeleton />;
+  }
 
   return (
     <div className="space-y-6">

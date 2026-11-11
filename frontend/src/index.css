@@ -62,6 +62,29 @@
 }
 
 /* ─────────────────────────────────────────
+   Medical ECG / Pulse Animation Keyframes
+───────────────────────────────────────── */
+@keyframes ecgPulse {
+  0% {
+    stroke-dashoffset: 400;
+    opacity: 0.3;
+  }
+  50% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -400;
+    opacity: 0.3;
+  }
+}
+
+.animate-ecg {
+  stroke-dasharray: 400;
+  animation: ecgPulse 2.4s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────
    Base Styles
 ───────────────────────────────────────── */
 @layer base {

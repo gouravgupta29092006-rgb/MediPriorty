@@ -42,6 +42,8 @@ Conventional hospital emergency departments and ambulance dispatch networks ofte
 | **Clinical Triage Sign-Off** | Role-restricted assessment with vital signs recording and multi-stage state transitions. |
 | **Role-Based Access Control** | Stateless JWT authentication protecting routes across `ADMIN`, `DISPATCHER`, and `MEDICAL_OFFICER`. |
 | **Immutable Audit Trail** | Automated system audit logging capturing actor, timestamp, client IP, action, and JSON payload. |
+| **Java Multithreading Architecture** | Centralized bounded `ThreadPoolTaskExecutor` thread pools executing analytics and Dijkstra routing asynchronously via `CompletableFuture`. |
+| **Medical Startup & Skeleton UI** | Clinical heartbeat/ECG startup loader and 11-page matching skeleton layout system ensuring zero layout shift and graceful error recovery. |
 | **Operational Analytics** | Real-time distribution visualizations, full 6-status ambulance readiness, and real department bed metrics via Recharts. |
 | **Healthcare UI/UX System** | Responsive 11-page command center styled with a healthcare teal palette, modernized clinical terminology, and light/dark theme support. |
 
@@ -240,7 +242,7 @@ MediPriority/
 │   │   └── resources/
 │   │       ├── db/migration/    # Flyway versioned SQL scripts (V1 to V12)
 │   │       └── application.yml  # Application properties
-│   ├── src/test/java/           # JUnit 5 & Mockito test suite (43 tests)
+│   ├── src/test/java/           # JUnit 5 & Mockito test suite (47 tests)
 │   ├── mvnw                     # Unix Maven Wrapper
 │   ├── mvnw.cmd                 # Windows Maven Wrapper
 │   └── pom.xml                  # Maven project descriptor
@@ -283,7 +285,7 @@ All technical documents are maintained under [`docs/`](docs/):
 - [`ALLOCATION_ALGORITHMS.md`](docs/ALLOCATION_ALGORITHMS.md) — Urgency score functions, Dijkstra routing, and bed matching.
 - [`SECURITY.md`](docs/SECURITY.md) — Authentication, BCrypt hashing, JWT lifecycle, and defense strategies.
 - [`TESTING_STRATEGY.md`](docs/TESTING_STRATEGY.md) — Quality assurance layers and test execution methodologies.
-- [`TEST_CASES.md`](docs/TEST_CASES.md) — Catalog of 43 backend and 15 security regression test cases.
+- [`TEST_CASES.md`](docs/TEST_CASES.md) — Catalog of 47 backend and 15 security regression test cases.
 - [`ENVIRONMENT_SETUP.md`](docs/ENVIRONMENT_SETUP.md) — Windows and Linux prerequisite installation.
 - [`DEPLOYMENT.md`](docs/DEPLOYMENT.md) — Production packaging, Nginx reverse proxy, and security checklist.
 - [`DEMO_GUIDE.md`](docs/DEMO_GUIDE.md) — Step-by-step evaluator walkthrough script.

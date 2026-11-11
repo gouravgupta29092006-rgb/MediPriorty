@@ -12,6 +12,7 @@ import {
 import api from '../api/client';
 import { QueueEntry } from '../types';
 import { useAuth } from '../context/AuthContext';
+import { PriorityQueueSkeleton } from '../components/skeleton/PageSkeletons';
 
 export const PriorityQueuePage: React.FC = () => {
   const [queue, setQueue] = useState<QueueEntry[]>([]);
@@ -61,6 +62,10 @@ export const PriorityQueuePage: React.FC = () => {
         return 'bg-[#F0FDF4] dark:bg-[var(--success-light)] text-[var(--success)] border-[#86EFAC]';
     }
   };
+
+  if (loading && queue.length === 0) {
+    return <PriorityQueueSkeleton />;
+  }
 
   return (
     <div className="space-y-6">

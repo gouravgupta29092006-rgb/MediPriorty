@@ -10,6 +10,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   hasRole: (roles: Role[]) => boolean;
   isLoading: boolean;
+  initError: string | null;
+  retryInit: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,8 +20,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [initError, setInitError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const initSession = () => {
+    setIsLoading(true);
+    setInitError(null);
     const savedToken = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
 
@@ -32,9 +37,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .then((res) => {
             setUser(res.data);
             localStorage.setItem('user', JSON.stringify(res.data));
+            setInitError(null);
           })
-          .catch(() => {
-            logout();
+          .catch((err) => {
+            if (!err.response) {
+              setInitError('Unable to connect to hospital API gateway. Please ensure the backend server is running.');
+            } else {
+              logout();
+            }
           })
           .finally(() => setIsLoading(false));
       } catch (e) {
@@ -44,6 +54,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else {
       setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    initSession();
   }, []);
 
   const login = (newToken: string, newUser: User) => {
@@ -58,6 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    setInitError(null);
   };
 
   const hasRole = (roles: Role[]) => {
@@ -75,6 +90,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!token && !!user,
         hasRole,
         isLoading,
+        initError,
+        retryInit: initSession,
       }}
     >
       {children}

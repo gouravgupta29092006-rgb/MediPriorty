@@ -1,6 +1,6 @@
 # MediPriority — Verified Test Cases & Results Matrix
 
-## 1. Backend Automated Test Suite (43 Tests — 100% Passing)
+## 1. Backend Automated Test Suite (47 Tests — 100% Passing)
 
 ### 1.1 Custom DSA Tests (`com.medipriority.dsa`)
 
@@ -64,6 +64,15 @@
 | `AmbulanceDispatchAuthorizationTest` | `testUnauthenticatedDispatchReturnsUnauthorized` | Unauthenticated user calls auto-dispatch | HTTP `401 Unauthorized` | **PASS** |
 | `AmbulanceDispatchAuthorizationTest` | `testAdminForbiddenFromCompletingAmbulance` | User with role `ADMIN` calls `/complete` | HTTP `403 Forbidden` | **PASS** |
 | `AmbulanceDispatchAuthorizationTest` | `testDispatcherCanCompleteAmbulance` | User with role `DISPATCHER` calls `/complete` | HTTP `200 OK` | **PASS** |
+
+### 1.5 Multithreaded Concurrency Tests (`com.medipriority.service`)
+
+| Test Class | Test Name | Input / Condition | Expected Behavior | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| `AsyncDashboardServiceTest` | `testConcurrentDashboardAggregation` | 3 sub-queries executed across `analyticsExecutor` | Parallel completion; accurate aggregated `DashboardResponse` | **PASS** |
+| `AsyncDashboardServiceTest` | `testConcurrentDashboardHandlesFailureGracefully` | Database connection error in one sub-thread | Graceful fallback without 500 error or exception escalation | **PASS** |
+| `AsyncRoutingTest` | `testEstimateTravelTimeAsync` | Single route query submitted to `routingExecutor` | CompletableFuture resolves within 8.5 minutes | **PASS** |
+| `AsyncRoutingTest` | `testEstimateMultipleRoutesConcurrently` | 4 route pairs submitted in parallel to executor | All 4 shortest path results returned without race conditions | **PASS** |
 
 ---
 

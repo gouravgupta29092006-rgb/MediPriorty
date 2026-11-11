@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { Activity, Lock, Mail, ShieldAlert, ArrowRight, UserCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { InitialMedicalLoader } from '../components/common/InitialMedicalLoader';
 import api from '../api/client';
 import { AuthResponse, User } from '../types';
 
@@ -9,10 +10,24 @@ export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading, initError, retryInit, logout } = useAuth();
   const navigate = useNavigate();
+
+  if (isLoading || initError) {
+    return (
+      <InitialMedicalLoader
+        error={initError}
+        onRetry={retryInit}
+        onContinueToLogin={logout}
+      />
+    );
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,7 +43,7 @@ export const Login: React.FC = () => {
       return;
     }
 
-    setIsLoading(true);
+    setIsSubmitting(true);
 
     try {
       const response = await api.post<AuthResponse>('/auth/login', { 
@@ -60,7 +75,7 @@ export const Login: React.FC = () => {
         setError(err.response.data?.message || 'An unexpected error occurred during authentication.');
       }
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -136,10 +151,10 @@ export const Login: React.FC = () => {
 
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isSubmitting}
               className="w-full mt-2 py-2.5 px-4 bg-accent hover:bg-accent-hover active:bg-accent-hover disabled:opacity-50 text-white rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2 group"
             >
-              {isLoading ? (
+              {isSubmitting ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>

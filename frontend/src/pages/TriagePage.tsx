@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import api from '../api/client';
 import { EmergencyRequest, TriageCategory, TriageRecord } from '../types';
+import { TriageSkeleton } from '../components/skeleton/PageSkeletons';
 import { useAuth } from '../context/AuthContext';
 
 export const TriagePage: React.FC = () => {
@@ -29,6 +30,7 @@ export const TriagePage: React.FC = () => {
   const [gcs, setGcs] = useState('12');
 
   const [history, setHistory] = useState<TriageRecord[]>([]);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -55,6 +57,8 @@ export const TriagePage: React.FC = () => {
       }
     } catch (err) {
       console.error('Failed to load emergency requests', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -119,6 +123,10 @@ export const TriagePage: React.FC = () => {
   };
 
   const selectedRequest = requests.find((r) => r.requestId === selectedRequestId);
+
+  if (loading && requests.length === 0) {
+    return <TriageSkeleton />;
+  }
 
   return (
     <div className="space-y-6">

@@ -9,6 +9,7 @@ import {
 import api from '../api/client';
 import { EmergencyRequest, Patient, RequestStatus, BedType } from '../types';
 import { useAuth } from '../context/AuthContext';
+import { EmergencyRequestsSkeleton } from '../components/skeleton/PageSkeletons';
 
 export const EmergencyRequestsPage: React.FC = () => {
   const { hasRole } = useAuth();
@@ -125,6 +126,10 @@ export const EmergencyRequestsPage: React.FC = () => {
         return 'bg-[#FEE2E2] text-[#DC2626] border-[#FCA5A5]';
     }
   };
+
+  if (loading && requests.length === 0) {
+    return <EmergencyRequestsSkeleton />;
+  }
 
   return (
     <div className="space-y-6">

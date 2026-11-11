@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Role } from '../../types';
+import { InitialMedicalLoader } from '../common/InitialMedicalLoader';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,17 +10,16 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
-  const { isAuthenticated, user, isLoading } = useAuth();
+  const { isAuthenticated, user, isLoading, initError, retryInit, logout } = useAuth();
   const location = useLocation();
 
-  if (isLoading) {
+  if (isLoading || initError) {
     return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center text-text-muted">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm font-semibold text-text-secondary">Loading MediPriority...</p>
-        </div>
-      </div>
+      <InitialMedicalLoader
+        error={initError}
+        onRetry={retryInit}
+        onContinueToLogin={logout}
+      />
     );
   }
 

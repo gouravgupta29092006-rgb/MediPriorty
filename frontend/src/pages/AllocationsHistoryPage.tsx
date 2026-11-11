@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { History, Truck, Bed, RefreshCw, Check } from 'lucide-react';
 import api from '../api/client';
 import { AmbulanceAllocation, BedAllocation } from '../types';
+import { AllocationsSkeleton } from '../components/skeleton/PageSkeletons';
 
 export const AllocationsHistoryPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'AMBULANCE' | 'BED'>('AMBULANCE');
@@ -28,6 +29,10 @@ export const AllocationsHistoryPage: React.FC = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  if (loading && ambulanceAllocs.length === 0 && bedAllocs.length === 0) {
+    return <AllocationsSkeleton />;
+  }
 
   return (
     <div className="space-y-6">

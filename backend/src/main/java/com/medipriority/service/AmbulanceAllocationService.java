@@ -12,6 +12,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +24,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Ambulance allocation service.
@@ -50,6 +57,10 @@ public class AmbulanceAllocationService {
     private final RoadNetworkService roadNetworkService;
     private final PriorityQueueService priorityQueueService;
     private final AuditService auditService;
+
+    @Autowired(required = false)
+    @Qualifier("routingExecutor")
+    private TaskExecutor routingExecutor;
 
     private final MergeSort<AmbulanceCandidate> sorter = new MergeSort<>();
 
@@ -90,15 +101,37 @@ public class AmbulanceAllocationService {
             throw new AllocationFailedException("No available ambulances at this time");
         }
 
-        List<AmbulanceCandidate> candidates = new ArrayList<>();
-        for (Ambulance amb : available) {
-            double travel = (amb.getCurrentNode() != null)
-                    ? roadNetworkService.estimateTravelTime(
-                            amb.getCurrentNode().getNodeId(), null)
-                    : 999.0; // no position data → treat as far
-            int capability = computeCapabilityScore(triage.getTriageCategory(),
-                    amb.getEquipmentLevel());
-            candidates.add(new AmbulanceCandidate(amb, travel, capability));
+        TaskExecutor executor = (routingExecutor != null) ? routingExecutor : new SyncTaskExecutor();
+
+        List<CompletableFuture<AmbulanceCandidate>> futures = available.stream()
+                .map(amb -> CompletableFuture.supplyAsync(() -> {
+                    double travel = (amb.getCurrentNode() != null)
+                            ? roadNetworkService.estimateTravelTime(
+                                    amb.getCurrentNode().getNodeId(), null)
+                            : 999.0; // no position data → treat as far
+                    int capability = computeCapabilityScore(triage.getTriageCategory(),
+                            amb.getEquipmentLevel());
+                    return new AmbulanceCandidate(amb, travel, capability);
+                }, executor).exceptionally(ex -> {
+                    log.error("Error evaluating route for ambulance {}: {}", amb.getRegistrationNumber(), ex.getMessage());
+                    return new AmbulanceCandidate(amb, 999.0, 0);
+                }))
+                .toList();
+
+        try {
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                    .get(3, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            log.warn("Concurrent candidate evaluation interrupted or timed out: {}", e.getMessage());
+        }
+
+        List<AmbulanceCandidate> candidates = futures.stream()
+                .map(f -> f.getNow(null))
+                .filter(c -> c != null)
+                .collect(Collectors.toList());
+
+        if (candidates.isEmpty()) {
+            throw new AllocationFailedException("Failed to evaluate candidate ambulances");
         }
 
         // Sort: best capability first, then shortest travel time

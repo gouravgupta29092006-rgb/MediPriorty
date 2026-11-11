@@ -283,3 +283,44 @@ frontend/src/
 
 Lower value = higher priority in the min-heap.
 Tie-breaking: earlier registration timestamp, then lower request_id.
+
+---
+
+## 9. Multithreading & Asynchronous Concurrency Architecture
+
+### 9.1 Centralized Thread Pools
+MediPriority provides structured concurrency through Spring-managed `ThreadPoolTaskExecutor` beans configured in `com.medipriority.config.AsyncConfig`:
+
+1. **`analyticsExecutor`**:
+   - Core Pool: 4, Max Pool: 8, Queue Capacity: 100
+   - Thread Prefix: `medipriority-analytics-`
+   - Rejection Policy: `ThreadPoolExecutor.CallerRunsPolicy`
+   - Purpose: Parallel execution of independent read-only database queries (emergency intake, fleet readiness, bed inventory) during dashboard analytics compilation.
+2. **`routingExecutor`**:
+   - Core Pool: 4, Max Pool: 8, Queue Capacity: 100
+   - Thread Prefix: `medipriority-routing-`
+   - Rejection Policy: `ThreadPoolExecutor.CallerRunsPolicy`
+   - Purpose: Concurrent Dijkstra pathfinding across candidate ambulance stations during automated dispatch.
+3. **`backgroundExecutor`**:
+   - Core Pool: 2, Max Pool: 4, Queue Capacity: 200
+   - Thread Prefix: `medipriority-background-`
+   - Purpose: Non-blocking operational maintenance and system health verification.
+
+### 9.2 Thread Safety & Transaction Integrity Guarantees
+- **No Shared Mutable State**: The `HospitalGraph` structure is immutable after startup. Dijkstra solvers instantiate local distance arrays and min-heaps per call.
+- **Transaction Safety**: All allocation state changes (`AmbulanceAllocationService.doAllocate()`, `BedAllocationService.doAllocate()`) execute within explicit `@Transactional` methods using database-level pessimistic locking (`findByIdWithLock`). Concurrent route estimation happens *before* transactional locking, completely preventing deadlocks.
+- **Bounded Timeouts**: All asynchronous `CompletableFuture` workflows define strict timeouts (3–4 seconds) with deterministic fallback handling.
+
+---
+
+## 10. Frontend Medical Loading & Skeleton UI Architecture
+
+### 10.1 Startup Loader (`InitialMedicalLoader.tsx`)
+- Renders during initial auth restoration (`/api/auth/me`) before route mounting.
+- Prevents protected content flashing and login screen flicker.
+- Displays animated SVG ECG heartbeat waveform with stage-by-stage clinical progress indicators.
+- Includes network timeout detection with immediate "Retry Gateway" and "Return to Login" actions.
+
+### 10.2 Page Skeleton System (`PageSkeletons.tsx`)
+- Provides zero-layout-shift UI placeholders across all 11 application routes.
+- Differentiates between initial load (`loading && !data`), background refetches (preserving live UI), and verified empty states.

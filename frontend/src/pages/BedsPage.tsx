@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import api from '../api/client';
 import { Bed, EmergencyRequest, BedAllocation, BedStatus } from '../types';
+import { BedsSkeleton } from '../components/skeleton/PageSkeletons';
 
 export const BedsPage: React.FC = () => {
   const [beds, setBeds] = useState<Bed[]>([]);
@@ -149,6 +150,10 @@ export const BedsPage: React.FC = () => {
     if (selectedDeptFilter === 'ALL') return true;
     return b.bedType === selectedDeptFilter;
   });
+
+  if (loading && beds.length === 0) {
+    return <BedsSkeleton />;
+  }
 
   return (
     <div className="space-y-6">

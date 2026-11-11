@@ -18,6 +18,7 @@
 | Swagger / SpringDoc OpenAPI | 2.5.x | API documentation |
 | Lombok | 1.18.x | Boilerplate reduction |
 | Jackson | 2.17.x | JSON serialization (bundled with Spring) |
+| Java Concurrency | java.util.concurrent (Java 21) | ThreadPoolTaskExecutor, CompletableFuture, parallel metrics & routing |
 
 ## Frontend
 

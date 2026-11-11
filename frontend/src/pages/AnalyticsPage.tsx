@@ -15,6 +15,7 @@ import { BarChart3, RefreshCw, Activity, Bed, Truck, CheckCircle2 } from 'lucide
 import api from '../api/client';
 import { useTheme } from '../context/ThemeContext';
 import { DashboardResponse } from '../types';
+import { AnalyticsSkeleton } from '../components/skeleton/PageSkeletons';
 
 export const AnalyticsPage: React.FC = () => {
   const [data, setData] = useState<DashboardResponse | null>(null);
@@ -106,6 +107,10 @@ export const AnalyticsPage: React.FC = () => {
     color: theme === 'dark' ? '#E7F0EF' : '#172B3A',
     boxShadow: 'var(--shadow-md)',
   };
+
+  if (loading && !data) {
+    return <AnalyticsSkeleton />;
+  }
 
   return (
     <div className="space-y-6">

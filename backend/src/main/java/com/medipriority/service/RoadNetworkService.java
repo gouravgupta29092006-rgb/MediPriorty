@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 
 /**
  * Road network graph service.
@@ -77,5 +81,34 @@ public class RoadNetworkService {
 
     public HospitalGraph getGraph() {
         return graph;
+    }
+
+    /**
+     * Asynchronously estimates travel time using the provided executor.
+     */
+    public CompletableFuture<Double> estimateTravelTimeAsync(Long sourceNodeId, Long destNodeId, Executor executor) {
+        return CompletableFuture.supplyAsync(() -> estimateTravelTime(sourceNodeId, destNodeId), executor);
+    }
+
+    /**
+     * Concurrently calculates shortest path travel times for multiple route queries.
+     */
+    public Map<String, Double> estimateMultipleRoutesConcurrently(List<long[]> routes, Executor executor) {
+        Map<String, Double> results = new ConcurrentHashMap<>();
+        if (routes == null || routes.isEmpty()) {
+            return results;
+        }
+
+        List<CompletableFuture<Void>> futures = routes.stream()
+                .map(pair -> CompletableFuture.runAsync(() -> {
+                    long src = pair[0];
+                    long dst = pair[1];
+                    double time = estimateTravelTime(src, dst);
+                    results.put(src + "->" + dst, time);
+                }, executor))
+                .toList();
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        return results;
     }
 }

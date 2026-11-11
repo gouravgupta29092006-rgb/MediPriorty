@@ -13,6 +13,7 @@ import {
 import api from '../api/client';
 import { Ambulance, EmergencyRequest, AmbulanceAllocation } from '../types';
 import { useAuth } from '../context/AuthContext';
+import { AmbulancesSkeleton } from '../components/skeleton/PageSkeletons';
 
 export const AmbulancesPage: React.FC = () => {
   const { user, hasRole } = useAuth();
@@ -176,6 +177,10 @@ export const AmbulancesPage: React.FC = () => {
         return 'bg-[#FEE2E2] text-[#DC2626] border-[#FCA5A5]';
     }
   };
+
+  if (loading && ambulances.length === 0) {
+    return <AmbulancesSkeleton />;
+  }
 
   return (
     <div className="space-y-6">
